@@ -1,2 +1,2 @@
 # FRC-2026-REBUILT
-FRC 404's open source code for the 2026 season: REBUILT
+This is team 404's code for the FRC 2026 Game "REBUILT". It is based off of the MaxSwerve template. To view our website, visit https://argsrobotics.com, and for a list of programming team members and other projects from our team, check out our Github.
