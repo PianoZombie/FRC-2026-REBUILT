@@ -16,7 +16,10 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
@@ -49,6 +52,7 @@ public class ShooterSubsystem extends SubsystemBase {
     motorOneConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorOneConfig.inverted(false);
     motorOneConfig.encoder.velocityConversionFactor(2 * Math.PI / 60); // no gear box
+    motorOne.configure(motorOneConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void setVoltage(double voltage) { // actually not sure if this will even be used
