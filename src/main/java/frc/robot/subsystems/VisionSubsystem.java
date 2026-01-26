@@ -49,23 +49,31 @@ public class VisionSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    var resultOne = cameraOne.getLatestResult();
-    var resultTwo = cameraTwo.getLatestResult();
+    var resultOne = cameraOne.getAllUnreadResults();
+    var resultTwo = cameraTwo.getAllUnreadResults();
 
-    Optional<EstimatedRobotPose> estimationOne = poseEstimatorOne.estimateCoprocMultiTagPose(resultOne);
-    Optional<EstimatedRobotPose> estimationTwo = poseEstimatorTwo.estimateCoprocMultiTagPose(resultTwo);
-    if (estimationOne.isEmpty()) {
-      estimationOne = poseEstimatorOne.estimateLowestAmbiguityPose(resultOne);
-    }
-    if (estimationTwo.isEmpty()) {
-      estimationTwo = poseEstimatorTwo.estimateLowestAmbiguityPose(resultTwo);
-    }
+    Optional<EstimatedRobotPose> estimationOne;
+    for (int i = 0; i < resultOne.size(); i++) {
+      estimationOne = poseEstimatorOne.estimateCoprocMultiTagPose(resultOne.get(i));
+      if (estimationOne.isEmpty()) {
+        estimationOne = poseEstimatorOne.estimateLowestAmbiguityPose(resultOne.get(i));
+      }
 
-    if (estimationOne.isPresent()) {
-      latestEstimate = estimationOne;
+      if (estimationOne.isPresent()) {
+        latestEstimate = estimationOne;
+      }
     }
-    if (estimationTwo.isPresent()) {
-      latestEstimate = estimationTwo;
+    
+    Optional<EstimatedRobotPose> estimationTwo;
+    for (int i = 0; i < resultTwo.size(); i++) {
+      estimationTwo = poseEstimatorTwo.estimateCoprocMultiTagPose(resultTwo.get(i));
+      if (estimationTwo.isEmpty()) {
+        estimationTwo = poseEstimatorTwo.estimateLowestAmbiguityPose(resultTwo.get(i));
+      }
+
+      if (estimationTwo.isPresent()) {
+        latestEstimate = estimationTwo;
+      }
     }
   }
 }
