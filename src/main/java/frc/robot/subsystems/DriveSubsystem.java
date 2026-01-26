@@ -23,10 +23,9 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.Vision;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import frc.robot.subsystems.VisionSubsystem;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot;
 
 import java.util.Optional;
 
@@ -12,12 +12,13 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.DriveSubsystem;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 
-public class VisionSubsystem extends SubsystemBase {
+public class Vision extends SubsystemBase {
   // April tags
   public static final AprilTagFieldLayout kTagLayout =
     AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
@@ -40,7 +41,7 @@ public class VisionSubsystem extends SubsystemBase {
   private final DriveSubsystem drive;
 
   /** Creates a new VisionSubsystem. */
-  public VisionSubsystem(DriveSubsystem drive) {
+  public Vision(DriveSubsystem drive) {
     this.drive = drive;
   }
 
@@ -70,7 +71,7 @@ public class VisionSubsystem extends SubsystemBase {
       }
 
       if (estimationTwo.isPresent()) {
-        //latestEstimate = estimationTwo;
+        drive.addVisionMeasurement(estimationTwo);
       }
     }
   }
