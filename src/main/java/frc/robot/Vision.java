@@ -11,14 +11,13 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.DriveSubsystem;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 
-public class Vision extends SubsystemBase {
+public class Vision {
   // April tags
   public static final AprilTagFieldLayout kTagLayout =
     AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
@@ -45,7 +44,6 @@ public class Vision extends SubsystemBase {
     this.drive = drive;
   }
 
-  @Override
   public void periodic() {
     // This method will be called once per scheduler run
     var resultOne = cameraOne.getAllUnreadResults();
