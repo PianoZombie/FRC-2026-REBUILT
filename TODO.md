@@ -20,3 +20,4 @@ Please ensure that you add anything left half-finished to the list, and remove a
 ## Vision
 - Fix camera offsets to robot
 - Add utility other than pose estimation
+- Check if we need to call to periodic
