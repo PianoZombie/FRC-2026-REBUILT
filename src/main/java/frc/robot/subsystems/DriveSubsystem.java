@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.subsystems.VisionSubsystem;
+
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
@@ -57,8 +59,12 @@ public class DriveSubsystem extends SubsystemBase {
       m_rearRight.getPosition()
      }, new Pose2d());
 
+  private final VisionSubsystem vision;
+
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() {
+  public DriveSubsystem(VisionSubsystem vision) {
+    this.vision = vision;
+
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
   }
@@ -74,6 +80,14 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+    vision.getLatestPoseEstimate().ifPresent(estimate -> {
+      mPoseEstimator.addVisionMeasurement(
+        estimate.estimatedPose.toPose2d(),
+        estimate.timestampSeconds
+      );
+    });
+
   }
 
   /**
