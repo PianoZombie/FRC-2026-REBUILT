@@ -1,6 +1,6 @@
 # Robot TODO List
 
-Please ensure that you add anything left half-finished to the list, and remove anything you finished.
+Please ensure that you add anything left half-finished to the list, and check off anything you finished.
 
 ## Shooter
 - [ ] Fix Constants.java
