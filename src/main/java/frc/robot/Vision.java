@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.Optional;
+import java.util.List;
 
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -12,6 +13,13 @@ import frc.robot.subsystems.DriveSubsystem;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonPipelineResult;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+
 
 public class Vision {
   // Cameras
@@ -30,6 +38,8 @@ public class Vision {
     this.drive = drive;
   }
 
+  //private double sumOfTagDistances;
+
   public void periodic() {
     // This method will be called once per scheduler run
     var result1 = camera1.getAllUnreadResults();
@@ -39,11 +49,11 @@ public class Vision {
     for (int i = 0; i < result1.size(); i++) {
       estimation1 = poseEstimator1.estimateCoprocMultiTagPose(result1.get(i));
       if (estimation1.isEmpty()) {
-        estimation1 = poseEstimator2.estimateLowestAmbiguityPose(result1.get(i));
+        estimation1 = poseEstimator1.estimateLowestAmbiguityPose(result1.get(i));
       }
 
       if (estimation1.isPresent()) {
-        drive.addVisionMeasurement(estimation1);
+        drive.addVisionMeasurement(estimation1, calculateStdDevs(result1.get(i), 0));
       }
     }
     
@@ -55,8 +65,44 @@ public class Vision {
       }
 
       if (estimation2.isPresent()) {
-        drive.addVisionMeasurement(estimation2);
+        drive.addVisionMeasurement(estimation2, calculateStdDevs(result2.get(i), 1));
       }
     }
+  }
+
+  // Largely taken from the AdvantageKit template, props to 6328
+  private Matrix<N3, N1> calculateStdDevs(PhotonPipelineResult result, int cameraIndex) {
+      int tagCount = result.getTargets().size();
+
+      double avgDistance =
+          result.getTargets().stream()
+              .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
+              .average()
+              .orElse(0.0);
+
+      double stdDevFactor = Math.pow(avgDistance, 2.0) / tagCount;
+
+      double linearStdDev =
+          VisionConstants.linearStdDevBaseline * stdDevFactor;
+      double angularStdDev =
+          VisionConstants.angularStdDevBaseline * stdDevFactor;
+
+      // If multi-tag solve, trust it more
+      if (tagCount > 1) {
+        linearStdDev *= VisionConstants.linearStdDevMegatag2Factor;
+        angularStdDev *= VisionConstants.angularStdDevMegatag2Factor;
+      }
+
+      // Per-camera trust factor
+      if (cameraIndex < VisionConstants.cameraStdDevFactors.length) {
+        linearStdDev *= VisionConstants.cameraStdDevFactors[cameraIndex];
+        angularStdDev *= VisionConstants.cameraStdDevFactors[cameraIndex];
+      }
+
+      return new Matrix<>(Nat.N3(), Nat.N1(), new double[] {
+        linearStdDev,
+        linearStdDev,
+        angularStdDev
+      });
   }
 }
