@@ -113,7 +113,9 @@ public final class Constants {
   public static final class IntakeContants {
     public static final int intakeCanID = 0;
   }
-
+  public static final class SpindexerContants {
+    public static final int spindexerCanID = 0; //placeholder
+  }
   public static final class VisionConstants {
     // Camera names from PV
     public static final String cam1 = "cameraOne";
