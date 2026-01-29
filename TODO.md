@@ -11,6 +11,11 @@ Please ensure that you add anything left half-finished to the list, and check of
     - [ ] EX: (button) -> .onTrue -> shooter.setVelocity(lowVel);
 - [X] Make auto rpm calculator command
     - [ ] Flesh out skeleton
+        - [ ] Need to finish spindexer and kicker code first
+    - [ ] Add plus/minus 6in
+    - [ ] Change to get x and y relative from shooter instead of robot
+    - [ ] Add some logging
+    - [ ] Check shot is possible before attempting it
     - [ ] Make moving version
 - [ ] Figure out inversion
 

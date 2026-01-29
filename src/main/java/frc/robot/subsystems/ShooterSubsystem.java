@@ -26,6 +26,9 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SparkMax motorOne;
   private final RelativeEncoder motorOneEncoder;
   private final SparkMaxConfig motorOneConfig;
+  
+  // tolerance for shooter
+  private static final double tolerance = 10; // plus or minus rad/sec
 
   // empirically tuned velocities to use on the shooter at low, mid, and high distances from the hub
   public static final int lowVel = 0;
@@ -49,7 +52,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     motorOneConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorOneConfig.inverted(false);
-    motorOneConfig.encoder.velocityConversionFactor(2 * Math.PI / 60); // no gear box
+    motorOneConfig.encoder.velocityConversionFactor(2 * Math.PI / 60); // no gear box, rad/sec
     motorOne.configure(motorOneConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
@@ -66,6 +69,10 @@ public class ShooterSubsystem extends SubsystemBase {
     double nextVelocity = shooterSetpoint.velocity;
 
     motorOne.setVoltage(shooter_feedforward.calculateWithVelocities(currentVelocity, nextVelocity));
+  }
+
+  public boolean shooterWithinTolerance(double target) {
+    return Math.abs(target - motorOneEncoder.getVelocity()) >= tolerance;
   }
 
   @Override

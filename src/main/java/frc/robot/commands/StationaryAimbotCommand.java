@@ -4,13 +4,32 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ShooterContants;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class StationaryAimbotCommand extends Command {
   /** Creates a new StationaryAimbotCommand. */
-  public StationaryAimbotCommand() {
+
+  private final DriveSubsystem drive;
+  private final ShooterSubsystem shooter;
+
+  Pose3d hubPose;
+
+  public StationaryAimbotCommand(DriveSubsystem drive, ShooterSubsystem shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.drive = drive;
+    addRequirements(drive);
+    this.shooter = shooter;
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -18,15 +37,37 @@ public class StationaryAimbotCommand extends Command {
   public void initialize() {
     // Activate lock in on hub
     // Activate spindexer
+
+    // Get basket pos
+    var alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+    hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(158.32), Units.inchesToMeters(72), new Rotation3d());
+    if (alliance == Alliance.Red) {
+      hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(445.32), Units.inchesToMeters(72), new Rotation3d());
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Get basket pos + robot pos
+    // Get robot pos
+    Pose2d robotPose = drive.getPose();
+    Pose2d relativePose = hubPose.toPose2d().relativeTo(robotPose);
+
     // Fancy projectile trajectory formula for required rpm
+    double theta = ShooterContants.theta; // theta of shooter wheel from horizon, radians
+    double rS = ShooterContants.radius; // radius of shooter wheel
+    double g = ShooterContants.g; // acceleration of gravity
+    double x = Math.hypot(relativePose.getX(), relativePose.getY()); // horizontal distance from robot to hub
+    double y = hubPose.getZ(); // vertical distance from robot to hub
+    double k = 1; // efficiency, "fudge factor"
+
+    double vB = (x / Math.cos(theta)) * Math.sqrt(g / (2 * (Math.tan(theta) * x - y))); // velocity we need to shoot ball at
+    double vS = vB / (k * rS); // angular velocity to spin shooter at, rad/sec
+
     // Check if shooter is within rpm tolerance
-    // if yes, shoot ball with kicker
+    if (shooter.shooterWithinTolerance(vS)) {
+      // if yes, shoot ball with kicker
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -34,11 +75,13 @@ public class StationaryAimbotCommand extends Command {
   public void end(boolean interrupted) {
     // Disable lock in on hub
     // Stop spinning shooter, indexer, and kicker
+    shooter.setVoltage(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // don't change since we have no way to know if the hopper is empty
     return false;
   }
 }
