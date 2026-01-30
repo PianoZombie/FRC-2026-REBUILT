@@ -102,7 +102,7 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
-  public static final class ShooterContants {
+  public static final class ShooterConstants {
     public static final double theta = Math.toRadians(0); // angle of shooter off horizontal
     public static final double g = 9.82; // gravity
     public static final double radius = 0; // shooter wheel
@@ -110,11 +110,14 @@ public final class Constants {
     public static final int shooterOneCanID = 0;
   }
 
-  public static final class IntakeContants {
+  public static final class IntakeConstants {
     public static final int intakeCanID = 0;
   }
-  public static final class SpindexerContants {
+  public static final class SpindexerConstants {
     public static final int spindexerCanID = 0; //placeholder
+  }
+  public static final class KickerConstants {
+    public static final int kickerCanID = 0; //placeholder
   }
   public static final class VisionConstants {
     // Camera names from PV

@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.util.Units;
 
-import frc.robot.Constants.ShooterContants;
+import frc.robot.Constants.ShooterConstants;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -46,7 +46,7 @@ public class ShooterSubsystem extends SubsystemBase {
     new TrapezoidProfile.State(0.0, 0.0);
 
   public ShooterSubsystem() {
-    motorOne = new SparkMax(ShooterContants.shooterOneCanID, MotorType.kBrushless);
+    motorOne = new SparkMax(ShooterConstants.shooterOneCanID, MotorType.kBrushless);
     motorOneEncoder = motorOne.getEncoder();
     motorOneConfig = new SparkMaxConfig();
 

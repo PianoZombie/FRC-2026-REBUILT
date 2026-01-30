@@ -11,7 +11,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterContants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -54,9 +54,9 @@ public class StationaryAimbotCommand extends Command {
     Pose2d relativePose = hubPose.toPose2d().relativeTo(robotPose);
 
     // Fancy projectile trajectory formula for required rpm
-    double theta = ShooterContants.theta; // theta of shooter wheel from horizon, radians
-    double rS = ShooterContants.radius; // radius of shooter wheel
-    double g = ShooterContants.g; // acceleration of gravity
+    double theta = ShooterConstants.theta; // theta of shooter wheel from horizon, radians
+    double rS = ShooterConstants.radius; // radius of shooter wheel
+    double g = ShooterConstants.g; // acceleration of gravity
     double x = Math.hypot(relativePose.getX(), relativePose.getY()); // horizontal distance from robot to hub
     double y = hubPose.getZ(); // vertical distance from robot to hub
     double k = 1; // efficiency, "fudge factor"
