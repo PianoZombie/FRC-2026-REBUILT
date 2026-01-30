@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.KickerSubsystem;
+import frc.robot.subsystems.SpindexerSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class StationaryAimbotCommand extends Command {
@@ -21,28 +23,39 @@ public class StationaryAimbotCommand extends Command {
 
   private final DriveSubsystem drive;
   private final ShooterSubsystem shooter;
+  private final KickerSubsystem kicker;
+  private final SpindexerSubsystem spindexer;
 
   Pose3d hubPose;
 
-  public StationaryAimbotCommand(DriveSubsystem drive, ShooterSubsystem shooter) {
+  public StationaryAimbotCommand(DriveSubsystem drive, ShooterSubsystem shooter, KickerSubsystem kicker,
+      SpindexerSubsystem spindexer) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drive = drive;
     addRequirements(drive);
     this.shooter = shooter;
     addRequirements(shooter);
+    this.kicker = kicker;
+    addRequirements(kicker);
+    this.spindexer = spindexer;
+    addRequirements(spindexer);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     // Activate lock in on hub
+
     // Activate spindexer
+    spindexer.startSpindexer();
 
     // Get basket pos
     var alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-    hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(158.32), Units.inchesToMeters(72), new Rotation3d());
+    hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(158.32), Units.inchesToMeters(72),
+        new Rotation3d());
     if (alliance == Alliance.Red) {
-      hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(445.32), Units.inchesToMeters(72), new Rotation3d());
+      hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(445.32), Units.inchesToMeters(72),
+          new Rotation3d());
     }
   }
 
@@ -64,17 +77,26 @@ public class StationaryAimbotCommand extends Command {
     double vB = (x / Math.cos(theta)) * Math.sqrt(g / (2 * (Math.tan(theta) * x - y))); // velocity we need to shoot ball at
     double vS = vB / (k * rS); // angular velocity to spin shooter at, rad/sec
 
+    shooter.setVelocity(vS);
+
     // Check if shooter is within rpm tolerance
+    // if yes, shoot ball with kicker
     if (shooter.shooterWithinTolerance(vS)) {
-      // if yes, shoot ball with kicker
+      kicker.startKicker();
+    } else {
+      kicker.stopKicker();
     }
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     // Disable lock in on hub
+
     // Stop spinning shooter, indexer, and kicker
+    spindexer.stopSpindexer();
+    kicker.stopKicker();
     shooter.setVoltage(0);
   }
 

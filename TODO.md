@@ -9,15 +9,17 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [ ] Tune feedforward as needed. kV should theoretically already be pretty close, kS definitely needs tuning
 - [ ] Add low/mid/migh to RobotContainer.java
     - [ ] EX: (button) -> .onTrue -> shooter.setVelocity(lowVel);
-- [X] Make auto rpm calculator command
-    - [ ] Flesh out skeleton
-        - [X] Need to finish spindexer and kicker code first
-    - [ ] Add plus/minus 6in
-    - [ ] Change to get x and y relative from shooter instead of robot
-    - [ ] Add some logging
-    - [ ] Check shot is possible before attempting it
-    - [ ] Make moving version
 - [ ] Figure out inversion
+
+## Stationary Aimbot Command
+- [X] Flesh out skeleton
+    - [X] Need to finish spindexer and kicker code first
+- [ ] Add plus/minus 6in
+- [ ] Change to get x and y relative from shooter instead of robot
+- [ ] Add some logging
+- [ ] Check shot is possible before attempting it
+- [ ] Add lock on hub
+- [ ] Make moving version
 
 ## Intake
 - [ ] Fix CAN ID in Constants.java
