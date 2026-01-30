@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 import edu.wpi.first.math.Matrix;
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -54,6 +54,10 @@ public class DriveSubsystem extends SubsystemBase {
   // The gyro sensor
   private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
 
+  // PID control for auto lock on
+  public PIDController mFeedbackController = new PIDController(1, 0, 0); // TUNE THIS.
+  private double omega;
+
   // Pose estimation
   SwerveDrivePoseEstimator mPoseEstimator = new SwerveDrivePoseEstimator(
     DriveConstants.kDriveKinematics, 
@@ -71,6 +75,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+    mFeedbackController.enableContinuousInput(-Math.PI, Math.PI);
+    mFeedbackController.setTolerance(Math.toRadians(1.5));
 
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
@@ -136,6 +142,9 @@ public class DriveSubsystem extends SubsystemBase {
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
+    if (omega != 0) {
+      rotDelivered = omega;
+    }
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
@@ -158,6 +167,17 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+  }
+
+  // given a point where it is on the field following always blue origin
+  public void lockRotationOnPoint(Pose2d absolutePose) {
+    Pose2d relativePose = absolutePose.relativeTo(getPose());
+    double desiredDelta = Math.atan2(relativePose.getY(), relativePose.getX());
+
+    omega = mFeedbackController.calculate(Math.toRadians(getHeading()), desiredDelta);
+    if (mFeedbackController.atSetpoint()) {
+      omega = 0;
+    }
   }
 
   /**

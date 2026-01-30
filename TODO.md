@@ -21,6 +21,11 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [ ] Add lock on hub
 - [ ] Make moving version
 
+## Drive
+- [ ] Figure out gyro inversion
+- [X] Auto lock on
+    - [ ] Tune PID controller
+
 ## Intake
 - [ ] Fix CAN ID in Constants.java
 - [ ] Figure out inversion

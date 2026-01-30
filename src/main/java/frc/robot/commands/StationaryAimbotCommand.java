@@ -44,7 +44,8 @@ public class StationaryAimbotCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // Activate lock in on hub
+    // Reset PID for lock in on hub
+    drive.mFeedbackController.reset();
 
     // Activate spindexer
     spindexer.startSpindexer();
@@ -78,6 +79,7 @@ public class StationaryAimbotCommand extends Command {
     double vS = vB / (k * rS); // angular velocity to spin shooter at, rad/sec
 
     shooter.setVelocity(vS);
+    drive.lockRotationOnPoint(hubPose.toPose2d());
 
     // Check if shooter is within rpm tolerance
     // if yes, shoot ball with kicker
