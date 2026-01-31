@@ -18,8 +18,11 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [ ] Change to get x and y relative from shooter instead of robot
 - [ ] Add some logging
 - [ ] Check shot is possible before attempting it
-- [ ] Add lock on hub
+- [X] Add lock on hub
+- [X] Add data file
+    - [ ] Turn into a supplier
 - [ ] Make moving version
+
 
 ## Drive
 - [ ] Figure out gyro inversion
