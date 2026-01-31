@@ -16,9 +16,9 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class KickerSubsystem extends SubsystemBase {
 
-
   private final SparkMax motor;
   private final SparkMaxConfig motorConfig;
+
   public KickerSubsystem() {
     motor = new SparkMax(KickerConstants.kickerCanID, MotorType.kBrushless);
     motorConfig = new SparkMaxConfig();
@@ -27,16 +27,16 @@ public class KickerSubsystem extends SubsystemBase {
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  //start
+  // start
   public void startKicker() {
     motor.set(0.3);
   }
 
-  //stop
+  // stop
   public void stopKicker() {
     motor.set(0.0);
   }
-  
+
   @Override
   public void periodic() {
     // Called once per scheduler run. Add telemetry or periodic checks here.

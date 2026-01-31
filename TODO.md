@@ -2,6 +2,11 @@
 
 Please ensure that you add anything left half-finished to the list, and check off anything you finished.
 
+## General
+- [ ] Cleanup EVERYTHING
+    - [ ] Especially DriveSubsystem.java
+- [ ] Discuss creating/choosing style guide
+
 ## Shooter
 - [ ] Fix Constants.java
 - [ ] Tune low/mid/high velocities
@@ -38,3 +43,14 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [ ] Fix camera offsets to robot
 - [ ] Add utility other than pose estimation
 - [ ] Check if we need to call to periodic
+
+## Auto / PathPlanner
+- [ ] Fix robot configs in PathPlanner GUI
+    - [ ] Robot mass
+    - [ ] Robot MOI
+    - [ ] Bumpers
+    - [ ] Wheel COF (has to be calculated?)
+    - [ ] Robot max speed (empirally measure)
+    - [ ] Drive current limit
+- [ ] Tune PID (defaults are 5, reduced to 1 for safety until testing)
+- [ ] Actually make paths/autos in gui

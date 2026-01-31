@@ -7,10 +7,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
-
 import java.util.Optional;
-
 import org.photonvision.EstimatedRobotPose;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.hal.HAL;
@@ -27,6 +31,7 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.PlathPlannerConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -60,17 +65,18 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Pose estimation
   SwerveDrivePoseEstimator mPoseEstimator = new SwerveDrivePoseEstimator(
-    DriveConstants.kDriveKinematics, 
-    Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
-     new SwerveModulePosition[] {
-      m_frontLeft.getPosition(),
-      m_frontRight.getPosition(),
-      m_rearLeft.getPosition(),
-      m_rearRight.getPosition()
-     }, new Pose2d());
+      DriveConstants.kDriveKinematics,
+      Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
+      new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_rearLeft.getPosition(),
+          m_rearRight.getPosition()
+      }, new Pose2d());
 
   public void addVisionMeasurement(Optional<EstimatedRobotPose> visionPose, Matrix<N3, N1> stdDevs) {
-    mPoseEstimator.addVisionMeasurement(visionPose.get().estimatedPose.toPose2d(), visionPose.get().timestampSeconds, stdDevs);
+    mPoseEstimator.addVisionMeasurement(visionPose.get().estimatedPose.toPose2d(), visionPose.get().timestampSeconds,
+        stdDevs);
   }
 
   /** Creates a new DriveSubsystem. */
@@ -80,6 +86,34 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
+
+    // Configure AutoBuilder last
+    // Stolen from PathPlanner docs
+    RobotConfig config = PlathPlannerConstants.config;
+    AutoBuilder.configure(
+        this::getPose, // Robot pose supplier
+        this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        (speeds, feedforwards) -> pathplannerRelativeDrive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+        new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+            new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(1.0, 0.0, 0.0) // Rotation PID constants
+        ),
+        config, // The robot configuration
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red
+          // alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
+        this // Reference to this subsystem to set requirements
+    );
   }
 
   @Override
@@ -121,6 +155,21 @@ public class DriveSubsystem extends SubsystemBase {
         pose);
   }
 
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return DriveConstants.kDriveKinematics.toChassisSpeeds(
+        m_frontLeft.getState(),
+        m_frontRight.getState(),
+        m_rearLeft.getState(),
+        m_rearRight.getState());
+  }
+
+  public void pathplannerRelativeDrive(ChassisSpeeds speeds) {
+    var states = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        states, DriveConstants.kMaxSpeedMetersPerSecond);
+    setModuleStates(states);
+  }
+
   /**
    * Method to drive the robot using joystick info.
    *
@@ -148,7 +197,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered * alwaysBlueInvert, ySpeedDelivered * alwaysBlueInvert, rotDelivered,
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered * alwaysBlueInvert,
+                ySpeedDelivered * alwaysBlueInvert, rotDelivered,
                 Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(

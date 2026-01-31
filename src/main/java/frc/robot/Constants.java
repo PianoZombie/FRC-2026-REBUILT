@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -102,6 +104,19 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
+  public static final class PlathPlannerConstants {
+    public static RobotConfig config;
+
+    static {
+      try {
+        config = RobotConfig.fromGUISettings();
+      } catch (Exception e) {
+        // Handle exception as needed
+        e.printStackTrace();
+      }
+    }
+  }
+
   public static final class ShooterConstants {
     public static final double theta = Math.toRadians(0); // angle of shooter off horizontal
     public static final double g = 9.82; // gravity
@@ -113,26 +128,28 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int intakeCanID = 0;
   }
+
   public static final class SpindexerConstants {
-    public static final int spindexerCanID = 0; //placeholder
+    public static final int spindexerCanID = 0; // placeholder
   }
+
   public static final class KickerConstants {
-    public static final int kickerCanID = 0; //placeholder
+    public static final int kickerCanID = 0; // placeholder
   }
+
   public static final class VisionConstants {
     // Camera names from PV
     public static final String cam1 = "cameraOne";
     public static final String cam2 = "cameraOne";
 
     // Camera offsets from robot center
-    public static final Transform3d kRobotToCamOne =
-      new Transform3d(new Translation3d(0, 0.0, 0), new Rotation3d(0, 0, 0));
-    public static final Transform3d kRobotToCamTwo =
-      new Transform3d(new Translation3d(0, 0.0, 0), new Rotation3d(0, 0, 0));
+    public static final Transform3d kRobotToCamOne = new Transform3d(new Translation3d(0, 0.0, 0),
+        new Rotation3d(0, 0, 0));
+    public static final Transform3d kRobotToCamTwo = new Transform3d(new Translation3d(0, 0.0, 0),
+        new Rotation3d(0, 0, 0));
 
     // April tags
-    public static final AprilTagFieldLayout kTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;
@@ -145,16 +162,14 @@ public final class Constants {
 
     // Standard deviation multipliers for each camera
     // (Adjust to trust some cameras more than others)
-    public static double[] cameraStdDevFactors =
-        new double[] {
-          1.0, // Camera 1
-          1.0 // Camera 2
-        };
+    public static double[] cameraStdDevFactors = new double[] {
+        1.0, // Camera 1
+        1.0 // Camera 2
+    };
 
     // Multipliers to apply for MegaTag 2 observations
     public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
-    public static double angularStdDevMegatag2Factor =
-        Double.POSITIVE_INFINITY; // No rotation data available
+    public static double angularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
   }
 
   public static final class NeoMotorConstants {
