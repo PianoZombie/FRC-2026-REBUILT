@@ -19,7 +19,7 @@ Please ensure that you add anything left half-finished to the list, and check of
 ## Stationary Aimbot Command
 - [X] Flesh out skeleton
     - [X] Need to finish spindexer and kicker code first
-- [ ] Add plus/minus 6in
+- [X] Add plus/minus 6in
 - [ ] Change to get x and y relative from shooter instead of robot
 - [ ] Add some logging
 - [ ] Check shot is possible before attempting it
