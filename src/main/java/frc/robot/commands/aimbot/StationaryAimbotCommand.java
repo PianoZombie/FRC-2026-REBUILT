@@ -87,7 +87,7 @@ public class StationaryAimbotCommand extends Command {
     // Stop spinning shooter, indexer, and kicker
     spindexer.stopSpindexer();
     kicker.stopKicker();
-    shooter.setVoltage(0);
+    shooter.stopShooter();
   }
 
   // Returns true when the command should end.

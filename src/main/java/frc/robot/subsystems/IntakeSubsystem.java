@@ -29,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  // Don't think we need to overcomplicate this tbh.
+  /** Spin the intake. */
   public void spinIntake() {
     motor.set(0.3); 
   }
