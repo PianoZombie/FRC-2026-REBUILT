@@ -21,6 +21,7 @@ public class SpindexerSubsystem extends SubsystemBase {
   public SpindexerSubsystem() {
     motor = new SparkMax(SpindexerConstants.spindexerCanID, MotorType.kBrushless);
     motorConfig = new SparkMaxConfig();
+    
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
