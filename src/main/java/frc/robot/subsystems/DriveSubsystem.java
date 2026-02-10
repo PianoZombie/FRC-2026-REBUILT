@@ -9,12 +9,10 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.config.RobotConfig;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.hal.HAL;
@@ -31,7 +29,7 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.PlathPlannerConstants;
+import frc.robot.Constants.PathPlannerConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -60,7 +58,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
 
   // PID control for auto lock on
-  public PIDController mFeedbackController = new PIDController(1, 0, 0); // TUNE THIS.
+  private PIDController mFeedbackController = new PIDController(1, 0, 0); // TUNE THIS.
   private double omega;
 
   // Pose estimation
@@ -74,6 +72,12 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
       }, new Pose2d());
 
+  /**
+   * Adds vision measurement to kalman filter.
+   * 
+   * @param visionPose Estimated pose from april tag.
+   * @param stdDevs    How much we trust the given pose.
+   */
   public void addVisionMeasurement(Optional<EstimatedRobotPose> visionPose, Matrix<N3, N1> stdDevs) {
     mPoseEstimator.addVisionMeasurement(visionPose.get().estimatedPose.toPose2d(), visionPose.get().timestampSeconds,
         stdDevs);
@@ -89,7 +93,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Configure AutoBuilder last
     // Stolen from PathPlanner docs
-    RobotConfig config = PlathPlannerConstants.config;
+    RobotConfig config = PathPlannerConstants.config;
     AutoBuilder.configure(
         this::getPose, // Robot pose supplier
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
@@ -118,7 +122,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Update pose in the periodic block
     mPoseEstimator.update(
         Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         new SwerveModulePosition[] {
@@ -155,6 +158,7 @@ public class DriveSubsystem extends SubsystemBase {
         pose);
   }
 
+  /** Returns robot relative ChassisSpeeds */
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return DriveConstants.kDriveKinematics.toChassisSpeeds(
         m_frontLeft.getState(),
@@ -163,6 +167,11 @@ public class DriveSubsystem extends SubsystemBase {
         m_rearRight.getState());
   }
 
+  /**
+   * Robot relative drive for use with PathPlanner.
+   * 
+   * @param speeds ChassisSpeeds to set modules to.
+   */
   public void pathplannerRelativeDrive(ChassisSpeeds speeds) {
     var states = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
@@ -190,10 +199,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
-    if (omega != 0) {
-      rotDelivered = omega;
-    }
+    double rotDelivered = (omega != 0) ? omega : (rot * DriveConstants.kMaxAngularSpeed);
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
@@ -219,7 +225,11 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
-  // given a point where it is on the field following always blue origin
+  /**
+   * Locks the rotation of the robot to face a point on the field.
+   * 
+   * @param absolutePose Absolute coordinate posistion of a point on the game field.
+   */
   public void lockRotationOnPoint(Pose2d absolutePose) {
     Pose2d relativePose = absolutePose.relativeTo(getPose());
     double desiredDelta = Math.atan2(relativePose.getY(), relativePose.getX());

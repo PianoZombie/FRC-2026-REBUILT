@@ -15,13 +15,19 @@ import frc.robot.subsystems.SpindexerSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class StationaryAimbotCommand extends Command {
-  /** Creates a new StationaryAimbotCommand. */
-
   private final DriveSubsystem drive;
   private final ShooterSubsystem shooter;
   private final KickerSubsystem kicker;
   private final SpindexerSubsystem spindexer;
 
+  /**
+   * Creates a new StationaryAimbotCommand.
+   * 
+   * @param drive
+   * @param shooter
+   * @param kicker
+   * @param spindexer
+   */
   public StationaryAimbotCommand(DriveSubsystem drive, ShooterSubsystem shooter, KickerSubsystem kicker,
       SpindexerSubsystem spindexer) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -35,25 +41,18 @@ public class StationaryAimbotCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // Reset PID for lock in on hub
-    drive.mFeedbackController.reset();
-
-    // Activate spindexer
     spindexer.startSpindexer();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Get hub pos
     Pose3d hubPose = StationaryAimbotCommandData.getHubPose();
-
-    // Get robot pos
     Pose2d robotPose = drive.getPose();
     Pose2d relativePose = hubPose.toPose2d().relativeTo(robotPose);
 
-    // Fancy projectile trajectory formula for required rpm
-    double theta = ShooterConstants.theta; // theta of shooter wheel from horizon, radians
+    // Projectile trajectory math
+    double theta = ShooterConstants.theta; // theta of shooter wheel from horizontal, radians
     double rS = ShooterConstants.radius; // radius of shooter wheel
     double g = ShooterConstants.g; // acceleration of gravity
     double x = Math.hypot(relativePose.getX(), relativePose.getY()) + StationaryAimbotCommandData.getOffsetMeters(); // horizontal distance from robot to hub
@@ -65,14 +64,15 @@ public class StationaryAimbotCommand extends Command {
         return;
     }
 
-    double vB = (x / Math.cos(theta)) * Math.sqrt(g / (2 * (Math.tan(theta) * x - y))); // ball velocity
-    double vS = vB / (k * rS); // shooter angular velocity, rad/sec
+    double vB = (x / Math.cos(theta)) * Math.sqrt(g / (2 * (Math.tan(theta) * x - y))); // required ball velocity
+    double vS = vB / (k * rS); // required shooter angular velocity, rad/sec
 
     shooter.setVelocity(vS);
     drive.lockRotationOnPoint(hubPose.toPose2d());
 
-    // Check if shooter is within rpm tolerance
-    // if yes, shoot ball with kicker
+    /* Check if shooter is within rpm tolerance
+     * if yes, shoot ball with kicker
+     */
     if (shooter.shooterWithinTolerance(vS)) {
       kicker.startKicker();
     } else {
@@ -84,16 +84,14 @@ public class StationaryAimbotCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // Stop spinning shooter, indexer, and kicker
     spindexer.stopSpindexer();
     kicker.stopKicker();
-    shooter.setVoltage(0);
+    shooter.stopShooter();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // don't change since we have no way to know if the hopper is empty
     return false;
   }
 }

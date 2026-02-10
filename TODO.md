@@ -12,7 +12,7 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [ ] Tune low/mid/high velocities
 - [ ] Fix trapezoid profile constraints
 - [ ] Tune feedforward as needed. kV should theoretically already be pretty close, kS definitely needs tuning
-- [ ] Add low/mid/migh to RobotContainer.java
+- [ ] Add low/mid/high to RobotContainer.java
     - [ ] EX: (button) -> .onTrue -> shooter.setVelocity(lowVel);
 - [ ] Figure out inversion
 

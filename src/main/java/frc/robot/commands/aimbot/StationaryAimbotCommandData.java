@@ -14,22 +14,27 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 public class StationaryAimbotCommandData {
     public static double offset = 0; // Fudge factor to add to model if needed mid-match
 
+    /** Add six inches to the aimbot fudge factor. */
     public static void addSixInches() {
         offset += Units.inchesToMeters(6);
     }
 
+    /** Subtract six inches from the aimbot fudge factor. */
     public static void minusSixInches() {
         offset -= Units.inchesToMeters(6);
     }
 
+    /** Reset aimbot fudge factor to zero. */
     public static void resetOffset() {
         offset = 0;
     }
 
+    /** Return aimbot fudge factor. */
     public static double getOffsetMeters() {
         return offset;
     }
 
+    /** Get field coordinates of our alliance's hub. */
     public static Pose3d getHubPose() {
         var alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
         Pose3d hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(158.32), Units.inchesToMeters(72),

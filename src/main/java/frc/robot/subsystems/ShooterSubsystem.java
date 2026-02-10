@@ -6,34 +6,28 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.util.Units;
-
 import frc.robot.Constants.ShooterConstants;
-
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
-
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class ShooterSubsystem extends SubsystemBase {
-  /** Creates a new ShooterSubsystem. */
+  // Empirically tuned velocities to use on the shooter at low, mid, and high distances from the hub
+  public static final int lowVel = 0;
+  public static final int midVel = 0;
+  public static final int highVel = 0;
+
   private final SparkMax motorOne;
   private final RelativeEncoder motorOneEncoder;
   private final SparkMaxConfig motorOneConfig;
   
-  // tolerance for shooter
-  private static final double tolerance = 10; // plus or minus rad/sec
-
-  // empirically tuned velocities to use on the shooter at low, mid, and high distances from the hub
-  public static final int lowVel = 0;
-  public static final int midVel = 0;
-  public static final int highVel = 0;
+  private static final double shooterVelTolerance = 10; // plus or minus rad/sec
 
   private double kS = 0;
   private double kV =  1 / Units.rotationsPerMinuteToRadiansPerSecond(565); // RPM per volt listed as 565 on neo vortex spec sheet
@@ -45,6 +39,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private TrapezoidProfile.State shooterSetpoint =
     new TrapezoidProfile.State(0.0, 0.0);
 
+  /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
     motorOne = new SparkMax(ShooterConstants.shooterOneCanID, MotorType.kBrushless);
     motorOneEncoder = motorOne.getEncoder();
@@ -56,23 +51,35 @@ public class ShooterSubsystem extends SubsystemBase {
     motorOne.configure(motorOneConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void setVoltage(double voltage) { // actually not sure if this will even be used
-    motorOne.setVoltage(voltage);
-  }
-
+  /**
+   * Sets the angular velocity of the shooter wheel.
+   * 
+   * @param radPerSec Desired angular velocity of the shooter wheel in units of radians per second.
+   */
   public void setVelocity(double radPerSec) {
     double currentVelocity = motorOneEncoder.getVelocity();
 
-    shooterSetpoint = shooter_profile.calculate(0.02
-    , shooterSetpoint
-    , new TrapezoidProfile.State(radPerSec, 0));
+    shooterSetpoint = shooter_profile.calculate(0.02,
+      shooterSetpoint,
+      new TrapezoidProfile.State(radPerSec, 0));
     double nextVelocity = shooterSetpoint.velocity;
 
     motorOne.setVoltage(shooter_feedforward.calculateWithVelocities(currentVelocity, nextVelocity));
   }
 
+  /** Stop spinning the shooter wheel. */
+  public void stopShooter() {
+    motorOne.set(0);
+  }
+
+  /**
+   * Check if shooter wheel is close enough to target angular velocity.
+   * 
+   * @param target Target angular velocity.
+   * @return       Whether or shooter is within tolerance.
+   */
   public boolean shooterWithinTolerance(double target) {
-    return Math.abs(target - motorOneEncoder.getVelocity()) >= tolerance;
+    return Math.abs(target - motorOneEncoder.getVelocity()) >= shooterVelTolerance;
   }
 
   @Override
