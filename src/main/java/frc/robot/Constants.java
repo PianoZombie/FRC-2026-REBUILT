@@ -104,7 +104,7 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
-  public static final class PlathPlannerConstants {
+  public static final class PathPlannerConstants {
     public static RobotConfig config;
 
     static {
