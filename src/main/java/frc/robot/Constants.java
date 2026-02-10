@@ -122,19 +122,19 @@ public final class Constants {
     public static final double g = 9.82; // gravity
     public static final double radius = 0; // shooter wheel
 
-    public static final int shooterOneCanID = 0;
+    public static final int shooterOneCanID = 50;
   }
 
   public static final class IntakeConstants {
-    public static final int intakeCanID = 0;
+    public static final int intakeCanID = 51;
   }
 
   public static final class SpindexerConstants {
-    public static final int spindexerCanID = 0; // placeholder
+    public static final int spindexerCanID = 52; // placeholder
   }
 
   public static final class KickerConstants {
-    public static final int kickerCanID = 0; // placeholder
+    public static final int kickerCanID = 53; // placeholder
   }
 
   public static final class VisionConstants {
