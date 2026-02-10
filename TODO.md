@@ -22,6 +22,9 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [X] Add plus/minus 6in
 - [ ] Change to get x and y relative from shooter instead of robot
 - [ ] Add some logging
+    - [X] Shooter velocity
+    - [ ] Swerve module state
+    - [ ] Position of robot
 - [ ] Check shot is possible before attempting it
 - [X] Add lock on hub
 - [X] Add data file
