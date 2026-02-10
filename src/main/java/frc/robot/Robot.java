@@ -13,6 +13,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Vision;
 import frc.robot.subsystems.DriveSubsystem;
 
+
+import edu.wpi.first.wpilibj.DataLogManager;
+
+
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
  * the TimedRobot documentation. If you change the name of this class or the package after creating
@@ -101,6 +105,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    
   }
 
   /** This function is called periodically during test mode. */
