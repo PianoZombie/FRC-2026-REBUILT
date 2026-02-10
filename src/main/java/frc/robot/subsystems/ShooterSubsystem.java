@@ -16,6 +16,9 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 
 public class ShooterSubsystem extends SubsystemBase {
   // Empirically tuned velocities to use on the shooter at low, mid, and high distances from the hub
@@ -38,7 +41,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private TrapezoidProfile shooter_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
   private TrapezoidProfile.State shooterSetpoint =
     new TrapezoidProfile.State(0.0, 0.0);
-
+  
+  private final NetworkTable shooterVelocityTable;
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
     motorOne = new SparkMax(ShooterConstants.shooterOneCanID, MotorType.kBrushless);
@@ -49,6 +53,8 @@ public class ShooterSubsystem extends SubsystemBase {
     motorOneConfig.inverted(false);
     motorOneConfig.encoder.velocityConversionFactor(2 * Math.PI / 60); // no gear box, rad/sec
     motorOne.configure(motorOneConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    shooterVelocityTable = NetworkTableInstance.getDefault().getTable("Shooter");
   }
 
   /**
@@ -85,5 +91,7 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    shooterVelocityTable.getEntry("CurrentVelocity").setDouble(motorOneEncoder.getVelocity());
+    shooterVelocityTable.getEntry("SetpointVelocity").setDouble(shooterSetpoint.velocity);
   }
 }

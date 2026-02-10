@@ -6,6 +6,10 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [ ] Cleanup EVERYTHING
     - [ ] Especially DriveSubsystem.java
 - [ ] Discuss creating/choosing style guide
+- [ ] Add some logging
+    - [X] Shooter velocity
+    - [ ] Swerve module state
+    - [ ] Position of robot
 
 ## Shooter
 - [ ] Fix Constants.java
@@ -21,7 +25,6 @@ Please ensure that you add anything left half-finished to the list, and check of
     - [X] Need to finish spindexer and kicker code first
 - [X] Add plus/minus 6in
 - [ ] Change to get x and y relative from shooter instead of robot
-- [ ] Add some logging
 - [ ] Check shot is possible before attempting it
 - [X] Add lock on hub
 - [X] Add data file

@@ -122,11 +122,11 @@ public final class Constants {
     public static final double g = 9.82; // gravity
     public static final double radius = 0; // shooter wheel
 
-    public static final int shooterOneCanID = 0;
+    public static final int shooterOneCanID = 0; // placeholder
   }
 
   public static final class IntakeConstants {
-    public static final int intakeCanID = 0;
+    public static final int intakeCanID = 0; // placeholder
   }
 
   public static final class SpindexerConstants {
