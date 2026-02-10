@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.PlathPlannerConstants;
+import frc.robot.Constants.PathPlannerConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -93,7 +93,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Configure AutoBuilder last
     // Stolen from PathPlanner docs
-    RobotConfig config = PlathPlannerConstants.config;
+    RobotConfig config = PathPlannerConstants.config;
     AutoBuilder.configure(
         this::getPose, // Robot pose supplier
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
