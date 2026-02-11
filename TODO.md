@@ -25,7 +25,7 @@ Please ensure that you add anything left half-finished to the list, and check of
     - [X] Need to finish spindexer and kicker code first
 - [X] Add plus/minus 6in
 - [ ] Change to get x and y relative from shooter instead of robot
-- [ ] Check shot is possible before attempting it
+- [X] Check shot is possible before attempting it
 - [X] Add lock on hub
 - [X] Add data file
     - [ ] Turn into a supplier
