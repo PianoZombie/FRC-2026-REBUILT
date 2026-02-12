@@ -126,8 +126,9 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double xPose = getPose().getX();
-    double yPose = getPose().getY();
+    Pose2d currentPose = getPose();
+    double xPose = currentPose.getX();
+    double yPose = currentPose.getY();
     poseTable.getEntry("X").setDouble(xPose);
     poseTable.getEntry("Y").setDouble(yPose);
     mPoseEstimator.update(
