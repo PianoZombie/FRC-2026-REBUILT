@@ -31,6 +31,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -83,6 +85,7 @@ public class DriveSubsystem extends SubsystemBase {
         stdDevs);
   }
 
+  private final NetworkTable poseTable;
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     mFeedbackController.enableContinuousInput(-Math.PI, Math.PI);
@@ -118,10 +121,15 @@ public class DriveSubsystem extends SubsystemBase {
         },
         this // Reference to this subsystem to set requirements
     );
+    poseTable = NetworkTableInstance.getDefault().getTable("Pose");
   }
 
   @Override
   public void periodic() {
+    double xPose = getPose().getX();
+    double yPose = getPose().getY();
+    poseTable.getEntry("X").setDouble(xPose);
+    poseTable.getEntry("Y").setDouble(yPose);
     mPoseEstimator.update(
         Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
         new SwerveModulePosition[] {
