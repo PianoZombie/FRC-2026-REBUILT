@@ -45,7 +45,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final NetworkTable shooterVelocityTable;
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
-    motorOne = new SparkMax(ShooterConstants.shooterOneCanID, MotorType.kBrushless);
+    motorOne = new SparkMax(ShooterConstants.shooterCanID, MotorType.kBrushless);
     motorOneEncoder = motorOne.getEncoder();
     motorOneConfig = new SparkMaxConfig();
 
@@ -85,7 +85,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return       Whether or shooter is within tolerance.
    */
   public boolean shooterWithinTolerance(double target) {
-    return Math.abs(target - motorOneEncoder.getVelocity()) >= shooterVelTolerance;
+    return Math.abs(target - motorOneEncoder.getVelocity()) <= shooterVelTolerance;
   }
 
   @Override

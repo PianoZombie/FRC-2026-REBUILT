@@ -123,7 +123,7 @@ public final class Constants {
     public static final double g = 9.82; // gravity
     public static final double radius = 0; // shooter wheel
 
-    public static final int shooterOneCanID = 0; // placeholder
+    public static final int shooterCanID = 0; // placeholder
   }
 
   public static final class IntakeConstants {
