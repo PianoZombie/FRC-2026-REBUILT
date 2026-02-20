@@ -21,12 +21,13 @@ public class IntakeSubsystem extends SubsystemBase {
   
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    motor = new SparkMax(IntakeConstants.intakeCanID, MotorType.kBrushless);
+    motor = new SparkMax(IntakeConstants.intakeCanID, MotorType.kBrushed);
     motorConfig = new SparkMaxConfig();
 
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    motorConfig.smartCurrentLimit(40);
   }
 
   /** Spin the intake. */
