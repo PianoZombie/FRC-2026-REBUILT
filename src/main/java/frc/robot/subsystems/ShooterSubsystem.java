@@ -33,7 +33,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private static final double shooterVelTolerance = 10; // plus or minus rad/sec
 
   private double kS = 0;
-  private double kV =  1 / Units.rotationsPerMinuteToRadiansPerSecond(565); // RPM per volt listed as 565 on neo vortex spec sheet
+  private double kV =  0.0169; // Approximation
   private SimpleMotorFeedforward shooter_feedforward = new SimpleMotorFeedforward(kS, kV);
   
   private double kMaxVelocity = 0;
