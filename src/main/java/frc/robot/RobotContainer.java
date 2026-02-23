@@ -80,6 +80,26 @@ public class RobotContainer {
         .onTrue(new InstantCommand(
             () -> m_robotDrive.zeroHeading(),
             m_robotDrive));
+
+    new JoystickButton(m_driverController, XboxController.Button.kA.value)
+        .onTrue(new InstantCommand(
+          () -> shooter.setVelocity(ShooterSubsystem.lowVel), 
+          shooter));
+
+    new JoystickButton(m_driverController, XboxController.Button.kB.value)
+        .onTrue(new InstantCommand(
+          () -> shooter.setVelocity(ShooterSubsystem.midVel), 
+          shooter));
+
+    new JoystickButton(m_driverController, XboxController.Button.kY.value)
+        .onTrue(new InstantCommand(
+          () -> shooter.setVelocity(ShooterSubsystem.highVel), 
+          shooter));
+
+    new JoystickButton(m_driverController, XboxController.Button.kX.value)
+        .onTrue(new InstantCommand(
+          () -> shooter.stopShooter(), 
+          shooter));
   }
 
   /**
