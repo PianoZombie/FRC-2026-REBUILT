@@ -48,15 +48,15 @@ public class StationaryAimbotCommand extends Command {
   @Override
   public void execute() {
     Pose3d hubPose = StationaryAimbotCommandData.getHubPose();
-    Pose2d robotPose = drive.getPose();
-    Pose2d relativePose = hubPose.toPose2d().relativeTo(robotPose);
+    Pose3d robotPose = new Pose3d(drive.getPose()).plus(ShooterConstants.shooterOffset);
+    Pose3d relativePose = hubPose.relativeTo(robotPose);
 
     // Projectile trajectory math
     double theta = ShooterConstants.theta; // theta of shooter wheel from horizontal, radians
     double rS = ShooterConstants.radius; // radius of shooter wheel
     double g = ShooterConstants.g; // acceleration of gravity
     double x = Math.hypot(relativePose.getX(), relativePose.getY()) + StationaryAimbotCommandData.getOffsetMeters(); // horizontal distance from robot to hub
-    double y = hubPose.getZ(); // vertical distance from robot to hub
+    double y = relativePose.getZ(); // vertical distance from robot to hub
     double k = 1; // efficiency, "fudge factor"
 
     // Don't divide by zero
