@@ -120,8 +120,8 @@ public final class Constants {
 
   public static final class ShooterConstants {
     public static final double theta = Math.toRadians(0); // angle of shooter off horizontal
-    public static final double g = 9.82; // gravity
-    public static final double radius = 0; // shooter wheel
+    public static final double g = 9.81; // gravity
+    public static final double radius = Units.inchesToMeters(2); // shooter wheel
 
     public static final int shooterCanID = 0; // placeholder
 
@@ -144,7 +144,7 @@ public final class Constants {
   public static final class VisionConstants {
     // Camera names from PV
     public static final String cam1 = "cameraOne";
-    public static final String cam2 = "cameraOne";
+    public static final String cam2 = "cameraTwo";
 
     // Camera offsets from robot center
     public static final Transform3d kRobotToCamOne = new Transform3d(new Translation3d(0, 0.0, 0),
