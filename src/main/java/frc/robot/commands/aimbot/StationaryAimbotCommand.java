@@ -68,7 +68,7 @@ public class StationaryAimbotCommand extends Command {
     double vS = vB / (k * rS); // required shooter angular velocity, rad/sec
 
     shooter.setVelocity(vS);
-    drive.lockRotationOnPoint(hubPose.toPose2d().minus(ShooterConstants.shooterOffset);
+    drive.lockRotationOnPoint(hubPose.toPose2d().minus(ShooterConstants.shooterOffset));
 
     /* Check if shooter is within rpm tolerance
      * if yes, shoot ball with kicker
