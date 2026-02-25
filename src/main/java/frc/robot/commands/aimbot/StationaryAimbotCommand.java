@@ -48,8 +48,8 @@ public class StationaryAimbotCommand extends Command {
   @Override
   public void execute() {
     Pose3d hubPose = StationaryAimbotCommandData.getHubPose();
-    Pose3d robotPose = new Pose3d(drive.getPose()).plus(ShooterConstants.shooterOffset);
-    Pose3d relativePose = hubPose.relativeTo(robotPose);
+    Pose3d shooterPose = new Pose3d(drive.getPose()).plus(ShooterConstants.shooterOffset);
+    Pose3d relativePose = hubPose.relativeTo(shooterPose);
 
     // Projectile trajectory math
     double theta = ShooterConstants.theta; // theta of shooter wheel from horizontal, radians
@@ -68,7 +68,7 @@ public class StationaryAimbotCommand extends Command {
     double vS = vB / (k * rS); // required shooter angular velocity, rad/sec
 
     shooter.setVelocity(vS);
-    drive.lockRotationOnPoint(hubPose.toPose2d());
+    drive.lockRotationOnPoint(hubPose.toPose2d().minus(ShooterConstants.shooterOffset);
 
     /* Check if shooter is within rpm tolerance
      * if yes, shoot ball with kicker
