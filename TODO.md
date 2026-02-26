@@ -3,8 +3,8 @@
 Please ensure that you add anything left half-finished to the list, and check off anything you finished.
 
 ## General
-- [ ] Cleanup EVERYTHING
-    - [ ] Especially DriveSubsystem.java
+- [X] Cleanup EVERYTHING
+    - [X] Especially DriveSubsystem.java
 - [ ] Discuss creating/choosing style guide
 - [ ] Add some logging
     - [X] Shooter velocity
@@ -24,7 +24,7 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [X] Flesh out skeleton
     - [X] Need to finish spindexer and kicker code first
 - [X] Add plus/minus 6in
-- [ ] Change to get x and y relative from shooter instead of robot
+- [X] Change to get x and y relative from shooter instead of robot
 - [X] Check shot is possible before attempting it
 - [X] Add lock on hub
 - [X] Add data file
@@ -44,8 +44,8 @@ Please ensure that you add anything left half-finished to the list, and check of
 
 ## Vision
 - [ ] Fix camera offsets to robot
-- [ ] Add utility other than pose estimation
-- [ ] Check if we need to call to periodic
+- [X] Add utility other than pose estimation
+- [X] Check if we need to call to periodic
 
 ## Auto / PathPlanner
 - [ ] Fix robot configs in PathPlanner GUI
