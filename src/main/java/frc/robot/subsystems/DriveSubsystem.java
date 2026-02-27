@@ -16,11 +16,15 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.config.RobotConfig;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -31,7 +35,9 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import com.studica.frc.Navx;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlannerConstants;
+import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -88,6 +94,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   private final NetworkTable poseTable;
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     mFeedbackController.enableContinuousInput(-Math.PI, Math.PI);
@@ -103,8 +110,11 @@ public class DriveSubsystem extends SubsystemBase {
         this::getPose, // Robot pose supplier
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        (speeds, feedforwards) -> pathplannerRelativeDrive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-        new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+        (speeds, feedforwards) -> pathplannerRelativeDrive(speeds), // Method that will drive the robot given ROBOT
+                                                                    // RELATIVE ChassisSpeeds. Also optionally outputs
+                                                                    // individual module feedforwards
+        new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic
+                                        // drive trains
             new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
             new PIDConstants(1.0, 0.0, 0.0) // Rotation PID constants
         ),
@@ -237,18 +247,35 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Locks the rotation of the robot to face a point on the field.
-   * 
-   * @param absolutePose Absolute coordinate posistion of a point on the game field.
+   * Locks the rotation of the robot to face the hub.
    */
-  public void lockRotationOnPoint(Pose2d absolutePose) {
-    Pose2d relativePose = absolutePose.relativeTo(getPose());
-    double desiredDelta = Math.atan2(relativePose.getY(), relativePose.getX());
+  public void lockRotationOnHub() {
+    Pose2d hubPose = FieldConstants.hubPose.toPose2d();
+
+    // Rotate shooter's X/Y offset into field frame
+    Translation2d shooterTranslation = new Translation2d(
+        ShooterConstants.shooterOffset.getX(),
+        ShooterConstants.shooterOffset.getY()).rotateBy(getPose().getRotation());
+
+    // Shooter's actual position on the field
+    Translation2d shooterFieldPos = getPose().getTranslation().plus(shooterTranslation);
+
+    // Vector from shooter to hub
+    Translation2d toHub = hubPose.getTranslation().minus(shooterFieldPos);
+
+    // Angle from shooter to hub, minus shooter's yaw offset so the barrel faces the
+    // hub
+    double desiredDelta = MathUtil.angleModulus(Math.atan2(toHub.getY(), toHub.getX())
+        - ShooterConstants.shooterOffset.getRotation().toRotation2d().getRadians());
 
     omega = mFeedbackController.calculate(Math.toRadians(getHeading()), desiredDelta);
     if (mFeedbackController.atSetpoint()) {
       omega = 0;
     }
+  }
+
+  public void endLockOn() {
+    omega = 0;
   }
 
   /**

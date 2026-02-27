@@ -7,6 +7,7 @@ package frc.robot.commands.aimbot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -41,13 +42,12 @@ public class StationaryAimbotCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    spindexer.startSpindexer();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose3d hubPose = StationaryAimbotCommandData.getHubPose();
+    Pose3d hubPose = FieldConstants.hubPose;
     Pose3d shooterPose = new Pose3d(drive.getPose()).plus(ShooterConstants.shooterOffset);
     Pose3d relativePose = hubPose.relativeTo(shooterPose);
 
@@ -59,6 +59,9 @@ public class StationaryAimbotCommand extends Command {
     double y = relativePose.getZ(); // vertical distance from robot to hub
     double k = 1; // efficiency, "fudge factor"
 
+    drive.lockRotationOnHub();
+    drive.drive(0, 0, 0, true);
+
     // Don't divide by zero
     if (Math.tan(theta) * x <= y) {
         return;
@@ -68,13 +71,14 @@ public class StationaryAimbotCommand extends Command {
     double vS = vB / (k * rS); // required shooter angular velocity, rad/sec
 
     shooter.setVelocity(vS);
-    drive.lockRotationOnPoint(hubPose.plus(ShooterConstants.shooterOffset.inverse()).toPose2d().rotateBy(ShooterConstants.shooterOffset.getRotation().toRotation2d()));
 
     // Feed when at target velocity
     if (shooter.shooterWithinTolerance(vS)) {
       kicker.startKicker();
+      spindexer.startSpindexer();
     } else {
       kicker.stopKicker();
+      spindexer.stopSpindexer();
     }
 
   }
@@ -85,6 +89,7 @@ public class StationaryAimbotCommand extends Command {
     spindexer.stopSpindexer();
     kicker.stopKicker();
     shooter.stopShooter();
+    drive.endLockOn();
   }
 
   // Returns true when the command should end.

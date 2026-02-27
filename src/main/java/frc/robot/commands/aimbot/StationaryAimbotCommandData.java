@@ -4,11 +4,7 @@
 
 package frc.robot.commands.aimbot;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /** Add your docs here. */
 public class StationaryAimbotCommandData {
@@ -32,18 +28,5 @@ public class StationaryAimbotCommandData {
     /** Return aimbot fudge factor. */
     public static double getOffsetMeters() {
         return offset;
-    }
-
-    /** Get field coordinates of our alliance's hub. */
-    public static Pose3d getHubPose() {
-        var alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-        Pose3d hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(158.32), Units.inchesToMeters(72),
-                new Rotation3d());
-        if (alliance == Alliance.Red) {
-            hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(445.32), Units.inchesToMeters(72),
-                    new Rotation3d());
-        }
-
-        return hubPose;
     }
 }

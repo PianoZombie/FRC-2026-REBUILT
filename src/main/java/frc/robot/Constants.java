@@ -8,6 +8,7 @@ import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,6 +16,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -174,6 +177,20 @@ public final class Constants {
     // Multipliers to apply for MegaTag 2 observations
     public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
     public static double angularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
+  }
+
+  public static final class FieldConstants {
+    public static Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+    public static Pose3d hubPose;
+
+    static {
+      hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(158.32), Units.inchesToMeters(72),
+          new Rotation3d());
+      if (alliance == Alliance.Red) {
+        hubPose = new Pose3d(Units.inchesToMeters(181.56), Units.inchesToMeters(445.32), Units.inchesToMeters(72),
+            new Rotation3d());
+      }
+    }
   }
 
   public static final class NeoMotorConstants {
