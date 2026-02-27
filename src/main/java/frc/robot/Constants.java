@@ -126,7 +126,7 @@ public final class Constants {
     public static final int shooterCanID = 0; // placeholder
 
     public static final Transform3d shooterOffset = new Transform3d(new Translation3d(0, 0, 0),
-        new Rotation3d(0, 0, 0));
+        new Rotation3d(0, 0, 90));
   }
 
   public static final class IntakeConstants {

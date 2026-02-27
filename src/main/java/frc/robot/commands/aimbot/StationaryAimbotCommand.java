@@ -68,7 +68,7 @@ public class StationaryAimbotCommand extends Command {
     double vS = vB / (k * rS); // required shooter angular velocity, rad/sec
 
     shooter.setVelocity(vS);
-    drive.lockRotationOnPoint(hubPose.plus(ShooterConstants.shooterOffset.inverse()).toPose2d());
+    drive.lockRotationOnPoint(hubPose.plus(ShooterConstants.shooterOffset.inverse()).toPose2d().rotateBy(ShooterConstants.shooterOffset.getRotation().toRotation2d()));
 
     // Feed when at target velocity
     if (shooter.shooterWithinTolerance(vS)) {
