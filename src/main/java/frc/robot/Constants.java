@@ -126,22 +126,27 @@ public final class Constants {
     public static final double g = 9.81; // gravity
     public static final double radius = Units.inchesToMeters(2); // shooter wheel
 
-    public static final int shooterCanID = 0; // placeholder
+    public static final int shooterCanID = 5;
 
     public static final Transform3d shooterOffset = new Transform3d(new Translation3d(0, 0, 0),
         new Rotation3d(0, 0, 90));
   }
 
   public static final class IntakeConstants {
-    public static final int intakeCanID = 0; // placeholder
+    public static final int intakeCanID = 8;
   }
 
   public static final class SpindexerConstants {
-    public static final int spindexerCanID = 0; // placeholder
+    public static final int spindexerCanID = 7;
   }
 
   public static final class KickerConstants {
-    public static final int kickerCanID = 0; // placeholder
+    public static final int kickerCanID = 6;
+  }
+
+  public static final class ClimberConstants {
+    public static final int oneStageCanID = 9;
+    public static final int twoStageCanID = 10;
   }
 
   public static final class VisionConstants {

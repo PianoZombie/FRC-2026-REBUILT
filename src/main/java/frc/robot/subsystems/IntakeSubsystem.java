@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.IntakeConstants;
-
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -27,8 +26,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
-    motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     motorConfig.smartCurrentLimit(40);
+    motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   /** Spin the intake. */
