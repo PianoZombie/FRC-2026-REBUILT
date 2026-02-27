@@ -13,18 +13,27 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.aimbot.StationaryAimbotCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.KickerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.SpindexerSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import java.util.List;
 
 /*
@@ -37,6 +46,9 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
+  private final SpindexerSubsystem spindexer = new SpindexerSubsystem();
+  private final KickerSubsystem kicker = new KickerSubsystem();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -71,16 +83,46 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
+    new JoystickButton(m_driverController, XboxController.Button.kY.value)
+        .whileTrue(new StartEndCommand(
+            () -> intake.reverseIntake(),
+            () -> intake.stopIntake(),
+            intake));
+
+    new JoystickButton(m_driverController, XboxController.Button.kA.value)
+        .whileTrue(new StartEndCommand(
+            () -> spindexer.reverseSpindexer(),
+            () -> spindexer.stopSpindexer(),
+            spindexer));
+
+    // Have to actually turn this into a command probably, need spindexer + kicker
+    new JoystickButton(m_driverController, XboxController.Button.kB.value)
         .whileTrue(new RunCommand(
+            () -> shooter.setVelocity(ShooterSubsystem.lowVel),
+            shooter))
+        .onFalse(new InstantCommand(
+            () -> shooter.stopShooter(),
+            shooter));
+
+    new JoystickButton(m_driverController, XboxController.Button.kStart.value)
+        .onTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, XboxController.Button.kStart.value)
+    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
         .onTrue(new InstantCommand(
-            () -> m_robotDrive.zeroHeading(),
-            m_robotDrive));
+            () -> {
+              if (intake.intakeIsSpinning) {
+                intake.stopIntake();
+              } else {
+                intake.spinIntake();
+              }
+            }, intake));
+
+    new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.5)
+        .whileTrue(new StationaryAimbotCommand(m_robotDrive, shooter, kicker, spindexer));
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
