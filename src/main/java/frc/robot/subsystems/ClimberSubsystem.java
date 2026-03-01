@@ -44,11 +44,11 @@ public class ClimberSubsystem extends SubsystemBase {
       oneStageController = oneStageMotor.getClosedLoopController();
       twoStageController = twoStageMotor.getClosedLoopController();
   }
-
+  /**Drive motor to first stage in rotations */
   public void setOneStage(double position) {
     oneStageController.setSetpoint(position, ControlType.kPosition);
   }
-
+  /**Drive motor to second stage in rotations */
   public void setTwoStage(double position) {
     twoStageController.setSetpoint(position, ControlType.kPosition);
   }
