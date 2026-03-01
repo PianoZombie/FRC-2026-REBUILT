@@ -31,6 +31,14 @@ public class ClimberSubsystem extends SubsystemBase {
     twoStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
+  public void setOneStage(double speed) {
+    oneStageMotor.set(speed);
+  }
+
+  public void setTwoStage(double speed) {
+    twoStageMotor.set(speed);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
