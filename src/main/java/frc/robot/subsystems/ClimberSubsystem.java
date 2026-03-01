@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -16,6 +18,8 @@ import frc.robot.Constants.ClimberConstants;
 public class ClimberSubsystem extends SubsystemBase {
   private final SparkMax oneStageMotor;
   private final SparkMax twoStageMotor;
+  private final SparkClosedLoopController oneStageController;
+  private final SparkClosedLoopController twoStageController;
   private final SparkMaxConfig motorConfig;
 
   /** Creates a new ClimberSubsystem. */
@@ -27,16 +31,26 @@ public class ClimberSubsystem extends SubsystemBase {
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
     motorConfig.smartCurrentLimit(40);
-    oneStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    twoStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    /** Configure PID for position control */
+    motorConfig.closedLoop
+      .p(ClimberConstants.kP) // please tune
+      .i(ClimberConstants.kI)
+      .d(ClimberConstants.kD)
+      .outputRange(-1, 1);
+
+      oneStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      twoStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+      oneStageController = oneStageMotor.getClosedLoopController();
+      twoStageController = twoStageMotor.getClosedLoopController();
   }
 
-  public void setOneStage(double speed) {
-    oneStageMotor.set(speed);
+  public void setOneStage(double position) {
+    oneStageController.setSetpoint(position, ControlType.kPosition);
   }
 
-  public void setTwoStage(double speed) {
-    twoStageMotor.set(speed);
+  public void setTwoStage(double position) {
+    twoStageController.setSetpoint(position, ControlType.kPosition);
   }
 
   @Override
