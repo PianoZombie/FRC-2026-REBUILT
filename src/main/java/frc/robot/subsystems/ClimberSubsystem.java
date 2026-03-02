@@ -10,6 +10,8 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 
@@ -17,6 +19,8 @@ public class ClimberSubsystem extends SubsystemBase {
   private final SparkMax oneStageMotor;
   private final SparkMax twoStageMotor;
   private final SparkMaxConfig motorConfig;
+  private final PIDController oneStagePID;
+  private final PIDController twoStagePID;
 
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
@@ -27,16 +31,22 @@ public class ClimberSubsystem extends SubsystemBase {
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
     motorConfig.smartCurrentLimit(40);
+
     oneStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     twoStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-  }
 
-  public void setOneStage(double speed) {
-    oneStageMotor.set(speed);
+    oneStagePID = new PIDController(0.1, 0, 0);
+    twoStagePID = new PIDController(0.1, 0, 0);
   }
-
-  public void setTwoStage(double speed) {
-    twoStageMotor.set(speed);
+  /**Drive motor to first stage in rotations */
+  public void setOneStage(double position) {
+    double output = oneStagePID.calculate(oneStageMotor.getEncoder().getPosition(), position);
+    oneStageMotor.set(output);
+  }
+  /**Drive motor to second stage in rotations */
+  public void setTwoStage(double position) {
+    double output = twoStagePID.calculate(twoStageMotor.getEncoder().getPosition(), position);
+    twoStageMotor.set(output);
   }
 
   @Override
