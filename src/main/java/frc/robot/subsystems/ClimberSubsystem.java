@@ -51,6 +51,18 @@ public class ClimberSubsystem extends SubsystemBase {
     motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
+  /**Drive motor to first stage in rotations */
+  public void setOneStage(double position) {
+    double output = oneStagePID.calculate(oneStageMotor.getEncoder().getPosition(), position);
+    oneStageMotor.set(output);
+  }
+  
+  /**Drive motor to second stage in rotations */
+  public void setTwoStage(double position) {
+    double output = twoStagePID.calculate(twoStageMotor.getEncoder().getPosition(), position);
+    twoStageMotor.set(output);
+  }
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
