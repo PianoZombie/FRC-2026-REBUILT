@@ -39,35 +39,16 @@ public class ClimberSubsystem extends SubsystemBase {
     twoStagePID = new PIDController(0.1, 0, 0);
   }
 
-  public void setOneStageCoastMode() {
-      motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-      oneStageMotor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+  public void setCoastMode(SparkMax motor) {
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.idleMode(SparkBaseConfig.IdleMode.kCoast);
+    motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
-  public void setOneStageBrakeMode() {
-      motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
-      oneStageMotor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-  }
-
-  public void setTwoStageCoastMode() {
-      motorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
-      twoStageMotor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-  }
-
-  public void setTwoStageBrakeMode() {
-      motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
-      twoStageMotor.configure(motorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-  }
-  
-  /**Drive motor to first stage in rotations */
-  public void setOneStage(double position) {
-    double output = oneStagePID.calculate(oneStageMotor.getEncoder().getPosition(), position);
-    oneStageMotor.set(output);
-  }
-  /**Drive motor to second stage in rotations */
-  public void setTwoStage(double position) {
-    double output = twoStagePID.calculate(twoStageMotor.getEncoder().getPosition(), position);
-    twoStageMotor.set(output);
+  public void setBrakeMode(SparkMax motor) {
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.idleMode(SparkBaseConfig.IdleMode.kBrake);
+    motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   @Override
