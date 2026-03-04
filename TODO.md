@@ -6,19 +6,16 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [X] Cleanup EVERYTHING
     - [X] Especially DriveSubsystem.java
 - [ ] Discuss creating/choosing style guide
-- [ ] Add some logging
+- [X] Add some logging
     - [X] Shooter velocity
-    - [ ] Swerve module state
+    - [X] Swerve module state
     - [X] Position of robot
 
 ## Shooter
 - [ ] Fix Constants.java
-- [ ] Tune low/mid/high velocities
 - [ ] Fix trapezoid profile constraints
-- [ ] Tune feedforward as needed. kV should theoretically already be pretty close, kS definitely needs tuning
 - [X] Add low/mid/high to RobotContainer.java
     - [X] EX: (button) -> .onTrue -> shooter.setVelocity(lowVel);
-- [ ] Figure out inversion
 
 ## Stationary Aimbot Command
 - [X] Flesh out skeleton
@@ -35,10 +32,9 @@ Please ensure that you add anything left half-finished to the list, and check of
 ## Drive
 - [ ] Figure out gyro inversion
 - [X] Auto lock on
-    - [ ] Tune PID controller
 
 ## Intake
-- [ ] Fix CAN ID in Constants.java
+- [X] Fix CAN ID in Constants.java
 - [ ] Figure out inversion
 - [ ] Test different motor power levels w/ build team
 
@@ -55,5 +51,38 @@ Please ensure that you add anything left half-finished to the list, and check of
     - [ ] Wheel COF (has to be calculated?)
     - [ ] Robot max speed (empirally measure)
     - [ ] Drive current limit
-- [ ] Tune PID (defaults are 5, reduced to 1 for safety until testing)
 - [ ] Actually make paths/autos in gui
+
+## Tuning
+- [ ] Tune Intake
+    - [ ] Inversion
+- [ ] Tune Drive
+    - [ ] mFeedbackController
+    - [ ] Translation PID
+    - [ ] Rotation PID
+- [ ] Tune Kicker
+    - [ ] Figure out inversion
+- [ ] Tune Shooter
+    - [ ] lowVel
+    - [ ] midVel
+    - [ ] highVel
+    - [ ] kS
+    - [ ] kV
+    - [ ] kMaxVelocity
+    - [ ] kMaxAcceleration
+    - [X] Inversion
+- [ ] Tune Spindexer
+    - [ ] Inversion
+- [ ] Configs
+    - [ ] drivingConfig.closedLoop
+    - [ ] turningConfig.closedLoop
+- [ ] Constants
+    - [ ] kGyroPort
+    - [ ] kGyroReversed
+- [ ] Tune auto
+    - [ ] Tune PID
+- [ ] Tune Vision
+    - [ ] Change offsets
+        - [ ] Camera one
+        - [ ] Camera two
+    - [ ] Calibrate camera two
