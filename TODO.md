@@ -54,14 +54,10 @@ Please ensure that you add anything left half-finished to the list, and check of
 - [ ] Actually make paths/autos in gui
 
 ## Tuning
-- [ ] Tune Intake
-    - [ ] Inversion
 - [ ] Tune Drive
     - [ ] mFeedbackController
     - [ ] Translation PID
     - [ ] Rotation PID
-- [ ] Tune Kicker
-    - [ ] Figure out inversion
 - [ ] Tune Shooter
     - [ ] lowVel
     - [ ] midVel
