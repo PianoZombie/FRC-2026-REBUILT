@@ -7,8 +7,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -18,35 +18,36 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-
 public class ShooterSubsystem extends SubsystemBase {
-  // Empirically tuned velocities to use on the shooter at low, mid, and high distances from the hub
+  // Empirically tuned velocities to use on the shooter at low, mid, and high
+  // distances from the hub
   public static final int lowVel = 0;
   public static final int midVel = 0;
   public static final int highVel = 0;
 
-  private final SparkMax motorOne;
+  private final SparkFlex motorOne;
   private final RelativeEncoder motorOneEncoder;
-  private final SparkMaxConfig motorOneConfig;
-  
+  private final SparkFlexConfig motorOneConfig;
+
   private static final double shooterVelTolerance = 10; // plus or minus rad/sec
 
   private double kS = 0;
-  private double kV =  0.0169; // Approximation
+  private double kV = 0.0169; // Approximation
   private SimpleMotorFeedforward shooter_feedforward = new SimpleMotorFeedforward(kS, kV);
-  
+
   private double kMaxVelocity = 0;
   private double kMaxAcceleration = 0;
-  private TrapezoidProfile shooter_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
-  private TrapezoidProfile.State shooterSetpoint =
-    new TrapezoidProfile.State(0.0, 0.0);
-  
+  private TrapezoidProfile shooter_profile = new TrapezoidProfile(
+      new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
+  private TrapezoidProfile.State shooterSetpoint = new TrapezoidProfile.State(0.0, 0.0);
+
   private final NetworkTable shooterVelocityTable;
+
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
-    motorOne = new SparkMax(ShooterConstants.shooterCanID, MotorType.kBrushless);
+    motorOne = new SparkFlex(ShooterConstants.shooterCanID, MotorType.kBrushless);
     motorOneEncoder = motorOne.getEncoder();
-    motorOneConfig = new SparkMaxConfig();
+    motorOneConfig = new SparkFlexConfig();
 
     motorOneConfig.idleMode(SparkBaseConfig.IdleMode.kCoast);
     motorOneConfig.inverted(false);
@@ -58,15 +59,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /**
    * Sets the angular velocity of the shooter wheel.
-   * 
-   * @param radPerSec Desired angular velocity of the shooter wheel in units of radians per second.
+   *
+   * @param radPerSec Desired angular velocity of the shooter wheel in units of
+   *                  radians per second.
    */
   public void setVelocity(double radPerSec) {
     double currentVelocity = motorOneEncoder.getVelocity();
 
     shooterSetpoint = shooter_profile.calculate(0.02,
-      shooterSetpoint,
-      new TrapezoidProfile.State(radPerSec, 0));
+        shooterSetpoint,
+        new TrapezoidProfile.State(radPerSec, 0));
     double nextVelocity = shooterSetpoint.velocity;
 
     motorOne.setVoltage(shooter_feedforward.calculateWithVelocities(currentVelocity, nextVelocity));
@@ -79,9 +81,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /**
    * Check if shooter wheel is close enough to target angular velocity.
-   * 
+   *
    * @param target Target angular velocity.
-   * @return       Whether or shooter is within tolerance.
+   * @return Whether or shooter is within tolerance.
    */
   public boolean shooterWithinTolerance(double target) {
     return Math.abs(target - motorOneEncoder.getVelocity()) <= shooterVelTolerance;

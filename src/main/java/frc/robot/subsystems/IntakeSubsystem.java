@@ -11,18 +11,18 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 
 public class IntakeSubsystem extends SubsystemBase {
   private final SparkMax motor;
-  private final SparkFlexConfig motorConfig;
+  private final SparkMaxConfig motorConfig;
   public boolean intakeIsSpinning;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     motor = new SparkMax(IntakeConstants.intakeCanID, MotorType.kBrushed);
-    motorConfig = new SparkFlexConfig();
+    motorConfig = new SparkMaxConfig();
 
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
