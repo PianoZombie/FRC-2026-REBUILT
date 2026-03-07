@@ -31,6 +31,7 @@ public class ClimberSubsystem extends SubsystemBase {
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
     motorConfig.smartCurrentLimit(40);
+    motorConfig.encoder.positionConversionFactor(1); // Motor rotations to meters
 
     oneStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     twoStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -54,13 +55,13 @@ public class ClimberSubsystem extends SubsystemBase {
   /**Drive motor to first stage in rotations */
   public void setOneStage(double position) {
     double output = oneStagePID.calculate(oneStageMotor.getEncoder().getPosition(), position);
-    oneStageMotor.set(output);
+    oneStageMotor.setVoltage(output);
   }
   
   /**Drive motor to second stage in rotations */
   public void setTwoStage(double position) {
     double output = twoStagePID.calculate(twoStageMotor.getEncoder().getPosition(), position);
-    twoStageMotor.set(output);
+    twoStageMotor.setVoltage(output);
   }
   
   @Override

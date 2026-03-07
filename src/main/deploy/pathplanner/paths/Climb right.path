@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2,
-        "y": 6.0
+        "x": 3.5,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.6758380019480139,
-        "y": 6.028421095702036
+        "x": 2.42962110644165,
+        "y": 3.905808293123263
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.75,
-        "y": 6.0
+        "x": 1.6,
+        "y": 3.2
       },
       "prevControl": {
-        "x": 1.7657410621747303,
-        "y": 6.0339569104751964
+        "x": 3.0148824828652017,
+        "y": 3.3244149649575085
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,10 +45,10 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Joel's Idea",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
