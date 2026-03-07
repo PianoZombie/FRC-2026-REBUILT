@@ -9,25 +9,26 @@ import frc.robot.Constants.KickerConstants;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
 public class KickerSubsystem extends SubsystemBase {
-  private final SparkMax motor;
-  private final SparkMaxConfig motorConfig;
+  private final SparkFlex motor;
+  private final SparkFlexConfig motorConfig;
 
   /** Creates a new KickerSubsytem. */
   public KickerSubsystem() {
-    motor = new SparkMax(KickerConstants.kickerCanID, MotorType.kBrushless);
-    motorConfig = new SparkMaxConfig();
+    motor = new SparkFlex(KickerConstants.kickerCanID, MotorType.kBrushless);
+    motorConfig = new SparkFlexConfig();
 
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
+    motorConfig.smartCurrentLimit(40);
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  //** Spin the kicker wheel. */
+  /** Spin the kicker wheel. */
   public void startKicker() {
     motor.set(0.3);
   }

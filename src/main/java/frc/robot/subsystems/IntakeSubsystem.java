@@ -10,19 +10,19 @@ import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 
 public class IntakeSubsystem extends SubsystemBase {
-  private final SparkMax motor;
-  private final SparkMaxConfig motorConfig;
+  private final SparkFlex motor;
+  private final SparkFlexConfig motorConfig;
   public boolean intakeIsSpinning;
-  
+
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    motor = new SparkMax(IntakeConstants.intakeCanID, MotorType.kBrushed);
-    motorConfig = new SparkMaxConfig();
+    motor = new SparkFlex(IntakeConstants.intakeCanID, MotorType.kBrushed);
+    motorConfig = new SparkFlexConfig();
 
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
@@ -32,13 +32,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Spin the intake. */
   public void spinIntake() {
-    motor.set(0.3); 
+    motor.set(0.3);
     intakeIsSpinning = true;
   }
 
   /** Spin the intake in reverse for unjamming fuel. */
   public void reverseIntake() {
-    motor.set(0.3);
+    motor.set(-0.3);
   }
 
   /** Stop spinning the intake. */
