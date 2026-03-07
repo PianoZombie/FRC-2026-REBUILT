@@ -9,19 +9,19 @@ import frc.robot.Constants.SpindexerConstants;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class SpindexerSubsystem extends SubsystemBase {
-  private final SparkMax motor;
+  private final SparkFlex motor;
   private final SparkMaxConfig motorConfig;
 
   /** Creates a new SpindexerSubsystem. */
   public SpindexerSubsystem() {
-    motor = new SparkMax(SpindexerConstants.spindexerCanID, MotorType.kBrushless);
+    motor = new SparkFlex(SpindexerConstants.spindexerCanID, MotorType.kBrushless);
     motorConfig = new SparkMaxConfig();
-    
+
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
