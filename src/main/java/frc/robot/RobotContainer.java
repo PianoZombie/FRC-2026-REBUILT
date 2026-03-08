@@ -41,14 +41,14 @@ import java.util.List;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final DriveSubsystem drive = new DriveSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final SpindexerSubsystem spindexer = new SpindexerSubsystem();
   private final KickerSubsystem kicker = new KickerSubsystem();
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -58,16 +58,16 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure default commands
-    m_robotDrive.setDefaultCommand(
+    drive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+            () -> drive.drive(
+                -MathUtil.applyDeadband(driverController.getLeftY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(driverController.getLeftX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
-            m_robotDrive));
+            drive));
   }
 
   /**
@@ -80,20 +80,20 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, XboxController.Button.kY.value)
+    new JoystickButton(driverController, XboxController.Button.kY.value)
         .whileTrue(new StartEndCommand(
             () -> intake.reverseIntake(),
             () -> intake.stopIntake(),
             intake));
 
-    new JoystickButton(m_driverController, XboxController.Button.kA.value)
+    new JoystickButton(driverController, XboxController.Button.kA.value)
         .whileTrue(new StartEndCommand(
             () -> spindexer.reverseSpindexer(),
             () -> spindexer.stopSpindexer(),
             spindexer));
 
     // Have to actually turn this into a command probably, need spindexer + kicker
-    new JoystickButton(m_driverController, XboxController.Button.kB.value)
+    new JoystickButton(driverController, XboxController.Button.kB.value)
         .whileTrue(new RunCommand(
             () -> shooter.setVelocity(ShooterSubsystem.lowVel),
             shooter))
@@ -101,12 +101,12 @@ public class RobotContainer {
             () -> shooter.stopShooter(),
             shooter));
 
-    new JoystickButton(m_driverController, XboxController.Button.kStart.value)
+    new JoystickButton(driverController, XboxController.Button.kStart.value)
         .onTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+            () -> drive.setX(),
+            drive));
 
-    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
+    new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
         .onTrue(new InstantCommand(
             () -> {
               if (intake.intakeIsSpinning) {
@@ -116,8 +116,8 @@ public class RobotContainer {
               }
             }, intake));
 
-    new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.5)
-        .whileTrue(new StationaryAimbotCommand(m_robotDrive, shooter, kicker, spindexer));
+    new Trigger(() -> driverController.getRightTriggerAxis() > 0.5)
+        .whileTrue(new StationaryAimbotCommand(drive, shooter, kicker, spindexer));
   }
 
   /**
@@ -149,24 +149,24 @@ public class RobotContainer {
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
         exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
+        drive::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 
         // Position controllers
         new PIDController(AutoConstants.kPXController, 0, 0),
         new PIDController(AutoConstants.kPYController, 0, 0),
         thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
+        drive::setModuleStates,
+        drive);
 
     // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetPose(exampleTrajectory.getInitialPose());
+    drive.resetPose(exampleTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    return swerveControllerCommand.andThen(() -> drive.drive(0, 0, 0, false));
   }
 
   public DriveSubsystem getDriveSubsystem() {
-    return m_robotDrive;
+    return drive;
   }
 }
