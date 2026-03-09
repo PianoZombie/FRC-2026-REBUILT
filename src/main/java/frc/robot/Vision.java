@@ -49,7 +49,7 @@ public class Vision {
       }
 
       if (estimation1.isPresent()) {
-        drive.addVisionMeasurement(estimation1, calculateStdDevs(result1.get(i), 0));
+        drive.addVisionMeasurement(estimation1.get(), calculateStdDevs(result1.get(i), 0));
       }
     }
 
@@ -61,7 +61,7 @@ public class Vision {
       }
 
       if (estimation2.isPresent()) {
-        drive.addVisionMeasurement(estimation2, calculateStdDevs(result2.get(i), 1));
+        drive.addVisionMeasurement(estimation2.get(), calculateStdDevs(result2.get(i), 1));
       }
     }
   }

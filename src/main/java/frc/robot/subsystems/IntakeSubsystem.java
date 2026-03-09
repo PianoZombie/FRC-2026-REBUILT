@@ -18,7 +18,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private final SparkMax motor;
   private final SparkMaxConfig motorConfig;
   public boolean intakeIsSpinning;
-  
+
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     motor = new SparkMax(IntakeConstants.intakeCanID, MotorType.kBrushed);
@@ -32,13 +32,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Spin the intake. */
   public void spinIntake() {
-    motor.set(0.3); 
+    motor.set(0.3);
     intakeIsSpinning = true;
   }
 
   /** Spin the intake in reverse for unjamming fuel. */
   public void reverseIntake() {
-    motor.set(0.3);
+    motor.set(-0.3);
   }
 
   /** Stop spinning the intake. */

@@ -24,10 +24,11 @@ public class KickerSubsystem extends SubsystemBase {
 
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
     motorConfig.inverted(false);
+    motorConfig.smartCurrentLimit(40);
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  //** Spin the kicker wheel. */
+  /** Spin the kicker wheel. */
   public void startKicker() {
     motor.set(0.3);
   }
