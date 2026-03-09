@@ -25,7 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
     motorConfig = new SparkMaxConfig();
 
     motorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake);
-    motorConfig.inverted(false);
+    motorConfig.inverted(true);
     motorConfig.smartCurrentLimit(40);
     motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
