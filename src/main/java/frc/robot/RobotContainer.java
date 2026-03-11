@@ -59,6 +59,8 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // PathPlanner commands
+    NamedCommands.registerCommand("Start Intake", new InstantCommand(() -> intake.spinIntake()));
+    NamedCommands.registerCommand("Stop Intake", new InstantCommand(() -> intake.stopIntake()));
     NamedCommands.registerCommand("Stationary Aimbot", new StationaryAimbotCommand(drive, shooter, kicker, spindexer));
 
     // Configure the button bindings
