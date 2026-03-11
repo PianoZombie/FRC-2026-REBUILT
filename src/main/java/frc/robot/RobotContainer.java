@@ -134,32 +134,32 @@ public class RobotContainer {
     new Trigger(() -> driverController.getRightTriggerAxis() > 0.5)
         .whileTrue(new StationaryAimbotCommand(drive, shooter, kicker, spindexer));
 
-    // D-Pad Up → oneStageUp (runs while held)
+    // D-Pad Up → twoStageUp (runs while held)
     new Trigger(() -> driverController.getPOV() == 0)
         .whileTrue(new StartEndCommand(
-            () -> climb.twoStageUp(),
-            () -> climb.twoStageStop(),
+            () -> climb.twoStageSet(0.5),
+            () -> climb.twoStageSet(0),
             climb));
 
-    // D-Pad Down → oneStageDown (runs while held)
+    // D-Pad Down → twoStageDown (runs while held)
     new Trigger(() -> driverController.getPOV() == 180)
         .whileTrue(new StartEndCommand(
-            () -> climb.twoStageDown(),
-            () -> climb.twoStageStop(),
+            () -> climb.twoStageSet(-0.5),
+            () -> climb.twoStageSet(0),
             climb));
 
-    // D-Pad Right → twoStageUp (runs while held)
+    // D-Pad Right → oneStageUp (runs while held)
     new Trigger(() -> driverController.getPOV() == 90)
         .whileTrue(new StartEndCommand(
-            () -> climb.oneStageUp(),
-            () -> climb.oneStageStop(),
+            () -> climb.oneStageSet(0.5),
+            () -> climb.oneStageSet(0),
             climb));
 
-    // D-Pad Left → twoStageDown (runs while held)
+    // D-Pad Left → oneStageDown (runs while held)
     new Trigger(() -> driverController.getPOV() == 270)
         .whileTrue(new StartEndCommand(
-            () -> climb.oneStageDown(),
-            () -> climb.oneStageStop(),
+            () -> climb.oneStageSet(-0.5),
+            () -> climb.oneStageSet(0),
             climb));
   }
 
