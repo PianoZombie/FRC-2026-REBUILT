@@ -5,7 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.config.RobotConfig;
-
+import com.studica.frc.Navx;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -67,7 +67,7 @@ public final class Constants {
     public static final int kFrontRightTurningCanId = 22;
     public static final int kRearRightTurningCanId = 44;
 
-    public static final int kGyroPort = 0; // placeholder, please change
+    public static final Navx.Port kGyroPort = Navx.Port.kUSB1;
     public static final boolean kGyroReversed = false; // if gyro is giving reversed values, change this to true
   }
 
@@ -145,18 +145,18 @@ public final class Constants {
   }
 
   public static final class ClimberConstants {
-    public static final int oneStageCanID = 9;
-    public static final int twoStageCanID = 10;
+    public static final int oneStageCanID = 10;
+    public static final int twoStageCanID = 9;
   }
 
   public static final class VisionConstants {
     // Camera names from PV
-    public static final String cam1 = "cameraOne";
-    public static final String cam2 = "cameraTwo";
+    public static final String cam1 = "ClimbShoot Camera";
+    public static final String cam2 = "Intake Camera";
 
     // Camera offsets from robot center
-    public static final Transform3d kRobotToCamOne = new Transform3d(new Translation3d(0, 0.0, 0),
-        new Rotation3d(0, 0, 0));
+    public static final Transform3d kRobotToCamOne = new Transform3d(new Translation3d(0.127, -0.3175, 0.51435),
+        new Rotation3d(0, 0, -Math.PI / 2));
     public static final Transform3d kRobotToCamTwo = new Transform3d(new Translation3d(0, 0.0, 0),
         new Rotation3d(0, 0, 0));
 

@@ -19,23 +19,24 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class ShooterSubsystem extends SubsystemBase {
-  // Empirically tuned velocities to use on the shooter at low, mid, and high distances from the hub
-  public static final int lowVel = 0;
+  // Empirically tuned velocities to use on the shooter at low, mid, and high
+  // distances from the hub
+  public static final int lowVel = 300;
   public static final int midVel = 0;
   public static final int highVel = 0; // 80 percent
 
   private final SparkFlex motorOne;
   private final RelativeEncoder motorOneEncoder;
-  private final SparkMaxConfig motorOneConfig;
-  
+  private final SparkFlexConfig motorOneConfig;
+
   private static final double shooterVelTolerance = 10; // plus or minus rad/sec
 
-  private double kS = 0;
+  private double kS = 0.15; // these both still need to be tuned
   private double kV = 0.0169; // Approximation
   private SimpleMotorFeedforward shooter_feedforward = new SimpleMotorFeedforward(kS, kV);
 
-  private double kMaxVelocity = 0;
-  private double kMaxAcceleration = 0;
+  private double kMaxVelocity = 710;
+  private double kMaxAcceleration = 710;
   private TrapezoidProfile shooter_profile = new TrapezoidProfile(
       new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
   private TrapezoidProfile.State shooterSetpoint = new TrapezoidProfile.State(0.0, 0.0);
@@ -68,7 +69,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterSetpoint = shooter_profile.calculate(0.02,
         shooterSetpoint,
         new TrapezoidProfile.State(radPerSec, 0));
-    double nextVelocity = shooterSetpoint.velocity;
+    double nextVelocity = shooterSetpoint.position;
 
     motorOne.setVoltage(shooter_feedforward.calculateWithVelocities(currentVelocity, nextVelocity));
   }
@@ -76,6 +77,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Stop spinning the shooter wheel. */
   public void stopShooter() {
     motorOne.set(0);
+    shooterSetpoint = new TrapezoidProfile.State(0.0, 0.0);
   }
 
   /**
@@ -92,6 +94,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     shooterVelocityTable.getEntry("CurrentVelocity").setDouble(motorOneEncoder.getVelocity());
-    shooterVelocityTable.getEntry("SetpointVelocity").setDouble(shooterSetpoint.velocity);
+    shooterVelocityTable.getEntry("SetpointVelocity").setDouble(shooterSetpoint.position);
   }
 }

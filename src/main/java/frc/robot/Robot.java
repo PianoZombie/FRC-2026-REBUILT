@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -19,6 +21,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Vision vision;
   private final RobotContainer m_robotContainer;
+  private final Field2d m_field = new Field2d();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -31,6 +34,11 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     vision = new Vision(m_robotContainer.getDriveSubsystem());
+  }
+
+  @Override
+  public void robotInit() {
+    SmartDashboard.putData("Field", m_field);
   }
 
   /**
@@ -54,6 +62,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     vision.periodic();
+    m_field.setRobotPose(m_robotContainer.getDriveSubsystem().getPose());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

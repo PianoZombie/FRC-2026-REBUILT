@@ -32,13 +32,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Spin the intake. */
   public void spinIntake() {
-    motor.set(0.3);
+    motor.set(0.85);
     intakeIsSpinning = true;
   }
 
   /** Spin the intake in reverse for unjamming fuel. */
   public void reverseIntake() {
-    motor.set(-0.3);
+    motor.set(-0.85);
   }
 
   /** Stop spinning the intake. */

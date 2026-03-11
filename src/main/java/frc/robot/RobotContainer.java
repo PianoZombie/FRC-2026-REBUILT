@@ -18,6 +18,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.aimbot.StationaryAimbotCommand;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.KickerSubsystem;
@@ -48,6 +49,7 @@ public class RobotContainer {
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final SpindexerSubsystem spindexer = new SpindexerSubsystem();
   private final KickerSubsystem kicker = new KickerSubsystem();
+  private final ClimberSubsystem climb = new ClimberSubsystem();
 
   // The driver's controller
   XboxController driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -57,7 +59,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // PathPlanner commands
-    NamedCommands.registerCommand("Stationary Aimbot", new StationaryAimbotCommand(m_robotDrive, shooter, kicker, spindexer));
+    NamedCommands.registerCommand("Stationary Aimbot", new StationaryAimbotCommand(drive, shooter, kicker, spindexer));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -101,10 +103,16 @@ public class RobotContainer {
     new JoystickButton(driverController, XboxController.Button.kB.value)
         .whileTrue(new RunCommand(
             () -> shooter.setVelocity(ShooterSubsystem.lowVel),
-            shooter))
-        .onFalse(new InstantCommand(
-            () -> shooter.stopShooter(),
-            shooter));
+            shooter)
+            .beforeStarting(() -> {
+              kicker.startKicker();
+              spindexer.startSpindexer();
+            })
+            .finallyDo(() -> {
+              shooter.stopShooter();
+              kicker.stopKicker();
+              spindexer.stopSpindexer();
+            }));
 
     new JoystickButton(driverController, XboxController.Button.kStart.value)
         .onTrue(new RunCommand(
@@ -123,6 +131,34 @@ public class RobotContainer {
 
     new Trigger(() -> driverController.getRightTriggerAxis() > 0.5)
         .whileTrue(new StationaryAimbotCommand(drive, shooter, kicker, spindexer));
+
+    // D-Pad Up → oneStageUp (runs while held)
+    new Trigger(() -> driverController.getPOV() == 0)
+        .whileTrue(new StartEndCommand(
+            () -> climb.twoStageUp(),
+            () -> climb.twoStageStop(),
+            climb));
+
+    // D-Pad Down → oneStageDown (runs while held)
+    new Trigger(() -> driverController.getPOV() == 180)
+        .whileTrue(new StartEndCommand(
+            () -> climb.twoStageDown(),
+            () -> climb.twoStageStop(),
+            climb));
+
+    // D-Pad Right → twoStageUp (runs while held)
+    new Trigger(() -> driverController.getPOV() == 90)
+        .whileTrue(new StartEndCommand(
+            () -> climb.oneStageUp(),
+            () -> climb.oneStageStop(),
+            climb));
+
+    // D-Pad Left → twoStageDown (runs while held)
+    new Trigger(() -> driverController.getPOV() == 270)
+        .whileTrue(new StartEndCommand(
+            () -> climb.oneStageDown(),
+            () -> climb.oneStageStop(),
+            climb));
   }
 
   /**

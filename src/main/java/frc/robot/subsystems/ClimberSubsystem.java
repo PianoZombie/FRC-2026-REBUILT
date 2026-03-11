@@ -34,6 +34,7 @@ public class ClimberSubsystem extends SubsystemBase {
     motorConfig.encoder.positionConversionFactor(1); // Motor rotations to meters
 
     oneStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    motorConfig.inverted(true);
     twoStageMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     oneStagePID = new PIDController(0.1, 0, 0);
@@ -52,18 +53,42 @@ public class ClimberSubsystem extends SubsystemBase {
     motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
-  /**Drive motor to first stage in rotations */
+  /** Drive motor to first stage in rotations */
   public void setOneStage(double position) {
     double output = oneStagePID.calculate(oneStageMotor.getEncoder().getPosition(), position);
     oneStageMotor.setVoltage(output);
   }
-  
-  /**Drive motor to second stage in rotations */
+
+  /** Drive motor to second stage in rotations */
   public void setTwoStage(double position) {
     double output = twoStagePID.calculate(twoStageMotor.getEncoder().getPosition(), position);
     twoStageMotor.setVoltage(output);
   }
-  
+
+  public void oneStageUp() {
+    oneStageMotor.set(0.5);
+  }
+
+  public void oneStageDown() {
+    oneStageMotor.set(-0.5);
+  }
+
+  public void twoStageUp() {
+    twoStageMotor.set(0.5);
+  }
+
+  public void twoStageDown() {
+    twoStageMotor.set(-0.5);
+  }
+
+  public void oneStageStop() {
+    oneStageMotor.set(0);
+  }
+
+  public void twoStageStop() {
+    twoStageMotor.set(0);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

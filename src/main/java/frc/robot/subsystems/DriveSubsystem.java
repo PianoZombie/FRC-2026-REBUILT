@@ -10,7 +10,6 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
-import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -73,7 +72,7 @@ public class DriveSubsystem extends SubsystemBase {
   // Pose estimation
   SwerveDrivePoseEstimator mPoseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics,
-      Rotation2d.fromDegrees(m_gyro.getYaw().in(Degrees)),
+      Rotation2d.fromDegrees(getHeading()),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -96,6 +95,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+    m_gyro.enableOptionalMessages(true, true, true, false, false, false, false, false, false, false);
+
     mFeedbackController.enableContinuousInput(-Math.PI, Math.PI);
     mFeedbackController.setTolerance(Math.toRadians(1.5));
 
@@ -143,13 +144,15 @@ public class DriveSubsystem extends SubsystemBase {
     poseTable.getEntry("X").setDouble(xPose);
     poseTable.getEntry("Y").setDouble(yPose);
     mPoseEstimator.update(
-        Rotation2d.fromDegrees(m_gyro.getYaw().in(Degrees)),
+        Rotation2d.fromDegrees(getHeading()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+    System.out.println("Gyro yaw: " + getHeading());
   }
 
   /**
@@ -168,7 +171,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetPose(Pose2d pose) {
     mPoseEstimator.resetPosition(
-        Rotation2d.fromDegrees(m_gyro.getYaw().in(Degrees)),
+        Rotation2d.fromDegrees(getHeading()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -225,7 +228,7 @@ public class DriveSubsystem extends SubsystemBase {
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered * alwaysBlueInvert,
                 ySpeedDelivered * alwaysBlueInvert, rotDelivered,
-                Rotation2d.fromDegrees(m_gyro.getYaw().in(Degrees)))
+                Rotation2d.fromDegrees(getHeading()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -310,7 +313,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return m_gyro.getYaw().in(Degrees);
+    return m_gyro.getYaw().in(Degrees) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
   /**
